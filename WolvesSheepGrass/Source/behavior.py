@@ -86,9 +86,9 @@ class Carnivore(EatBehavior):
         EatBehavior.__init__(self, agent, food_gain, world_size)
 
     def eat(self, prey_list, terrain):
-        for prey in prey_list:
+        for index, prey in enumerate(prey_list):
             if self.agent.is_overlapping(prey):
-                del prey  # Eat the prey
+                del prey_list[index]  # Eat the prey
                 self.agent.energy += self.food_gain
 
 
