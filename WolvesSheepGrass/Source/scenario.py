@@ -7,8 +7,8 @@ Description:    The objective of this file is to contain test cases for differen
 """
 
 # Project Related Imports
-from Utilities import *
-from WolvesSheepGrass.Source import *
+from Utilities.common_imports import *
+from Utilities.constants import *
 
 # Global Variable Declarations
 

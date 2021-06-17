@@ -8,8 +8,8 @@ Description:    The objective of this file is to contain class definitions for t
 """
 
 # Project Related Imports
-from Utilities import *
-from WolvesSheepGrass.Source import *
+from Utilities.common_imports import *
+from Utilities.constants import *
 
 # Global Variable Declarations
 
@@ -19,20 +19,21 @@ from WolvesSheepGrass.Source import *
 class Agent:
 
     def __init__(self):
-        pass
+        self.symbol = ""
 
 
 class Wolf(Agent):
 
     def __init__(self):
         Agent.__init__(self)
-        pass
+        self.symbol = "x"
 
 
 class Sheep(Agent):
 
     def __init__(self):
         Agent.__init__(self)
+        self.symbol = "o"
         pass
 
 

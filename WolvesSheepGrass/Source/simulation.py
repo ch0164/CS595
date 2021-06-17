@@ -7,10 +7,12 @@ Description:    The objective of this file is to contain the logic for conductin
 """
 
 # Project Related Imports
-from Utilities import *
-from WolvesSheepGrass.Source import *
+from Utilities.common_imports import *
+from Utilities.constants import *
+from environment import *
 
 # Global Variable Declarations
+row_data = []  # To contain the representation of the world data at one time as a list of strings.
 
 # IDE Likes Two Empty Lines Before Class Definition
 
@@ -20,7 +22,8 @@ def run_simulation():
 
 
 if __name__ == "__main__":
-    run_simulation()
+    wsg_world = Environment(10, 30)
+    # run_simulation()
 
 
 # IDE Likes Empty Line At End Of File

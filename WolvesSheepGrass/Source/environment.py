@@ -8,8 +8,8 @@ Description:    The objective of this file is to define the environment of the s
 """
 
 # Project Related Imports
-from Utilities import *
-from WolvesSheepGrass.Source import *
+from Utilities.common_imports import *
+from Utilities.constants import *
 
 # Global Variable Declarations
 
@@ -18,7 +18,26 @@ from WolvesSheepGrass.Source import *
 
 class Environment:
 
-    def __init__(self):
-        pass
+    def __init__(self, world_size, grass_regrowth_time):
+        self.grid_count = world_size * world_size  # How many individual grids there are in the world
+        self.terrain = np.zeros((world_size, world_size), dtype=bool)  # Boolean matrix -- 1 = grass, 0 = dirt
+        self.regrowth_time = grass_regrowth_time  # How many grass patches should be generated per time step
+
+        # Randomly generate half of the terrain with grass and half with dirt.
+        for i in range(self.grid_count // 2):
+            row, col = random.randint(0, world_size - 1), random.randint(0, world_size - 1)
+            if not self.terrain[row][col]:
+                self.terrain[row][col] = True
+            else:
+                continue
+
+        # Print world for reference.
+        for row in range(world_size):
+            for col in range(world_size):
+                if self.terrain[row][col]:
+                    print(GREEN_FONT + " 🟩 ", end="")
+                else:
+                    print(BROWN_FONT + " 🟫 ", end="")
+            print()
 
 # IDE Likes Empty Line At End Of File
