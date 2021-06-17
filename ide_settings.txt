@@ -1,0 +1,3 @@
+Using Pycharm IDE:
+
+Set Hard Wrap to 120 columns: Preferences -> Code Editor -> Code Style
