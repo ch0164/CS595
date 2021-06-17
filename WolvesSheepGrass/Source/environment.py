@@ -19,9 +19,10 @@ from Utilities.constants import *
 class Environment:
 
     def __init__(self, world_size, grass_regrowth_time):
+        self.world_size = world_size  # How many rows/columns there are
+        self.regrowth_time = grass_regrowth_time  # How many grass patches should be generated per time step
         self.grid_count = world_size * world_size  # How many individual grids there are in the world
         self.terrain = np.zeros((world_size, world_size), dtype=bool)  # Boolean matrix -- 1 = grass, 0 = dirt
-        self.regrowth_time = grass_regrowth_time  # How many grass patches should be generated per time step
 
         # Randomly generate half of the terrain with grass and half with dirt.
         for i in range(self.grid_count // 2):
@@ -31,13 +32,15 @@ class Environment:
             else:
                 continue
 
+    def print_world(self):
         # Print world for reference.
-        for row in range(world_size):
-            for col in range(world_size):
+        for row in range(self.world_size):
+            for col in range(self.world_size):
                 if self.terrain[row][col]:
-                    print(GREEN_FONT + " 🟩 ", end="")
+                    print(GREEN_FONT + "🟩", end="")
                 else:
-                    print(BROWN_FONT + " 🟫 ", end="")
+                    print(BROWN_FONT + "🟫", end="")
             print()
+        print(WHITE_FONT)  # Set font back to default
 
 # IDE Likes Empty Line At End Of File
