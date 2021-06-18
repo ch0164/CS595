@@ -40,12 +40,7 @@ class Agent(object):
             (self.col % self.world_size == other_agent.col % self.world_size)
 
     def is_on_grass(self, terrain):
-        for row in range(self.world_size):
-            for col in range(self.world_size):
-                if terrain[row][col] is GRASS_PATCH and \
-                    row == self.row % self.world_size and col == self.col % self.world_size:
-                    return True
-        return False
+        return terrain[self.row % self.world_size][self.col % self.world_size] is GRASS_PATCH
 
 
 class Wolf(Agent):
