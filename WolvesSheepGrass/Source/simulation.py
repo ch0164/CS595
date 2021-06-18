@@ -35,18 +35,27 @@ def run_simulation():
     wolf_food_gain, sheep_food_gain = 20, 4
     wolf_reproduction, sheep_reproduction = 0.05, 0.04
 
-    wolf_list = [Wolf(world_size, wolf_food_gain, wolf_reproduction) for w in range(wolf_count)]
-    sheep_list = [Sheep(world_size, sheep_food_gain, sheep_reproduction) for s in range(sheep_count)]
+    # Initialize wolves and sheep, the agents in the simulation.
+    wolf_list = [Wolf(world_size, wolf_food_gain, wolf_reproduction) for _ in range(wolf_count)]
+    sheep_list = [Sheep(world_size, sheep_food_gain, sheep_reproduction) for _ in range(sheep_count)]
     agent_list = wolf_list + sheep_list
 
+    # Run the simulation.
     for _ in range(iterations):
         for index, agent in enumerate(agent_list):
             agent.move()
             agent.eat(sheep_list, wsg_world.terrain)
-            print(agent.energy)
-            # agent.reproduce
+            # agent.reproduce()
+
+            # Is the agent out of energy (i.e. dead)?
             if agent.energy <= 0:
                 del agent_list[index]
+
+        # Repopulate the terrain with grass patches.
+        # wsg_world.regrow()
+
+        # For manual simulation only -- suspend execution to examine output.
+        time.sleep(timestep)
 
 
 
