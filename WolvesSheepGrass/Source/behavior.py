@@ -69,6 +69,15 @@ class SeekBehavior(MoveBehavior):
         pass
 
 
+class FleeBehavior(MoveBehavior):
+
+    def __init__(self, agent, world_size):
+        MoveBehavior.__init__(agent, world_size)
+
+    def move(self):
+        pass
+
+
 class EatBehavior(object):
 
     def __init__(self, agent, food_gain, world_size):
@@ -106,10 +115,29 @@ class Herbivore(EatBehavior):
             self.agent.energy += self.food_gain
 
 
+# TODO: Maybe we could add genetics into this...
+#  The child_agent could inherit a different movement behavior than the parent, i.e. recessive gene.
 class ReproduceBehavior:
 
-    def __init__(self, reproduction_rate):
-        pass
+    def __init__(self, agent, reproduction_rate):
+        self.agent = agent
+        self.reproduction_rate = reproduction_rate
+
+    def reproduce(self):
+        # Produce a random number between 0 and 100.
+        rand_reproduce = random.random() * 100
+
+        # If the random number is less than the agent's reproduction rate, reproduce.
+        child_agent = None
+
+        if rand_reproduce < self.reproduction_rate:
+            child_agent = copy.deepcopy(self.agent)  # Spawn a child of the agent.
+            child_agent.energy = 2 * child_agent.food_gain  # Set the child's initial energy.
+            self.agent.energy /= 2  # Divide parent agent's energy by half.
+            child_agent.move()  # Move the child agent.
+
+        # Return the child.
+        return child_agent
 
 
 # IDE Likes Empty Line At End Of File

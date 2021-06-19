@@ -7,5 +7,6 @@ import csv
 import re
 import numpy as np
 import random
+import copy
 
 # IDE Likes Empty Line At End Of File

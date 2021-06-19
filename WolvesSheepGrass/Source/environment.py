@@ -28,8 +28,9 @@ class Environment:
             for patch in patches:
                 patch.grow()
 
-    def print_world(self):
+    def print_world(self, iteration):
         # Print world for reference.
+        print("Iteration {}:".format(iteration + 1))
         for patches in self.terrain:
             for patch in patches:
                 patch.show()
@@ -68,6 +69,7 @@ class Grass:
 def get_patch(terrain, world_size, row, col):
     # Return the patch object specified by the position passed.
     return terrain[row % world_size][col % world_size]
+
 
 def is_grass(terrain, world_size, row, col):
     # Determine whether or not the specified location is a grass patch.

@@ -31,7 +31,7 @@ def run_simulation():
     wsg_world = Environment(world_size, grass_regrowth_time)
 
     # Set initial conditions and parameters.
-    wolf_count, sheep_count = 0, 30
+    wolf_count, sheep_count = 5, 5
     wolf_food_gain, sheep_food_gain = 20, 4
     wolf_reproduction, sheep_reproduction = 0.05, 0.04
 
@@ -39,20 +39,28 @@ def run_simulation():
     wolf_list = [Wolf(world_size, wolf_food_gain, wolf_reproduction) for _ in range(wolf_count)]
     sheep_list = [Sheep(world_size, sheep_food_gain, sheep_reproduction) for _ in range(sheep_count)]
     agent_list = wolf_list + sheep_list
+    print(agent_list)
 
     # Run the simulation.
-    for _ in range(iterations):
+    for iteration in range(iterations):
         for index, agent in enumerate(agent_list):
+            # Move the agent according to its movement behavior.
             agent.move()
+
+            # Let the agent eat according to its diet.
             agent.eat(sheep_list, wsg_world.terrain)
-            # agent.reproduce()
+
+            # Determine if the agent should reproduce or not.
+            child_agent = agent.reproduce()
+            if child_agent:
+                agent_list.append(child_agent)
 
             # Is the agent out of energy (i.e. dead)?
             if agent.energy <= 0:
                 del agent_list[index]
 
         # Show the world.
-        wsg_world.print_world()
+        wsg_world.print_world(iteration)
 
         # Cultivate the terrain with grass patches.
         wsg_world.cultivate()
