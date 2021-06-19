@@ -22,10 +22,10 @@ def run_simulation():
     # TODO: Implement scenario
 
     # Set simulation parameters.
-    iterations, timestep = 100, 0.5
+    iterations, tick = 100, 0.5
 
     # Set environment parameters.
-    world_size, grass_regrowth_time = 10, 30
+    world_size, grass_regrowth_time = 10, 5
 
     # Initialize the environment.
     wsg_world = Environment(world_size, grass_regrowth_time)
@@ -52,10 +52,10 @@ def run_simulation():
                 del agent_list[index]
 
         # Repopulate the terrain with grass patches.
-        # wsg_world.regrow()
+        wsg_world.cultivate()
 
         # For manual simulation only -- suspend execution to examine output.
-        time.sleep(timestep)
+        # time.sleep(tick)
 
 
 

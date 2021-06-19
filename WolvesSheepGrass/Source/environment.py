@@ -19,28 +19,50 @@ from Utilities.constants import *
 class Environment:
 
     def __init__(self, world_size, grass_regrowth_time):
-        self.world_size = world_size  # How many rows/columns there are
-        self.regrowth_time = grass_regrowth_time  # How many grass patches should be generated per time step
-        self.grid_count = world_size * world_size  # How many individual grids there are in the world
-        self.terrain = np.zeros((world_size, world_size), dtype=bool)  # Boolean matrix -- 1 = grass, 0 = dirt
+        self.world_size = world_size
+        self.terrain = [[Grass(grass_regrowth_time) for _ in range(world_size)] for _ in range(world_size)]
 
-        # Randomly generate half of the terrain with grass and half with dirt.
-        for i in range(self.grid_count // 2):
-            row, col = random.randint(0, world_size - 1), random.randint(0, world_size - 1)
-            if not self.terrain[row][col]:
-                self.terrain[row][col] = True
-            else:
-                continue
+    def cultivate(self):
+        # Determine if it is time for dirt patch to regrow into a grass patch.
+        for patches in self.terrain:
+            for patch in patches:
+                patch.grow()
 
     def print_world(self):
         # Print world for reference.
-        for row in range(self.world_size):
-            for col in range(self.world_size):
-                if self.terrain[row][col]:
-                    print(GREEN_FONT + "🟩", end="")
-                else:
-                    print(BROWN_FONT + "🟫", end="")
+        for patches in self.terrain:
+            for patch in patches:
+                patch.show()
             print()
-        print(WHITE_FONT)  # Set font back to default
+        print(WHITE_FONT)
+
+
+class Grass:
+
+    def __init__(self, grass_regrowth_time):
+        self.grass_regrowth_time = grass_regrowth_time
+        self.countdown = random.randint(0, grass_regrowth_time - 1)
+
+        # There is a 50% chance upon generation that a patch is grass.
+        if random.random() < 0.5:
+            self.patch_color = DIRT_PATCH
+        else:
+            self.patch_color = GRASS_PATCH
+
+    def grow(self):
+        # If the patch is brown and countdown is not positive, set patch color to green and reset the countdown timer.
+        if self.patch_color is DIRT_PATCH and self.countdown <= 0:
+            self.patch_color = GRASS_PATCH
+            self.countdown = self.grass_regrowth_time
+        # Otherwise, decrement the countdown timer by one.
+        else:
+            self.countdown -= 1
+
+    def show(self, end=""):
+        if self.patch_color is GRASS_PATCH:
+            print(GREEN_FONT + "🟩", end=end)
+        else:
+            print(BROWN_FONT + "🟫", end=end)
+
 
 # IDE Likes Empty Line At End Of File
