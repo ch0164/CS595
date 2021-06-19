@@ -41,6 +41,7 @@ def run_simulation():
     agent_list = wolf_list + sheep_list
 
     # Run the simulation.
+    # TODO: There exists a bug where the lists are not being updated properly after elements are concatenated/removed.
     for iteration in range(iterations):
         for index, agent in enumerate(agent_list):
             # Move the agent according to its movement behavior.
