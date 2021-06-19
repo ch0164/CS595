@@ -28,12 +28,16 @@ class Environment:
             for patch in patches:
                 patch.grow()
 
-    def print_world(self, iteration):
+    def print_world(self, agent_list, iteration):
         # Print world for reference.
         print("Iteration {}:".format(iteration + 1))
-        for patches in self.terrain:
-            for patch in patches:
-                patch.show()
+        for row, patches in enumerate(self.terrain):
+            for col, patch in enumerate(patches):
+                symbol = "."
+                for agent in agent_list:
+                    if agent.at_position(row, col):
+                        symbol = agent.symbol
+                patch.show(symbol)
             print()
         print(WHITE_FONT)
 
@@ -59,11 +63,11 @@ class Grass:
         else:
             self.countdown -= 1
 
-    def show(self, end=""):
+    def show(self, symbol, end=""):
         if self.patch_color is GRASS_PATCH:
-            print(GREEN_FONT + "🟩", end=end)
+            print(GREEN_FONT + symbol, end=end)
         else:
-            print(BROWN_FONT + "🟫", end=end)
+            print(BROWN_FONT + symbol, end=end)
 
 
 def get_patch(terrain, world_size, row, col):

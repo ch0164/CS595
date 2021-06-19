@@ -44,6 +44,11 @@ class Agent(object):
         # Determine whether or not the agent is on a grass patch.
         return is_grass(terrain, self.world_size, self.row, self.col)
 
+    def at_position(self, row, col):
+        # Determine if the agent is at the specified position.
+        return self.row % self.world_size == row % self.world_size and \
+               self.col % self.world_size == col % self.world_size
+
 
 class Wolf(Agent):
 

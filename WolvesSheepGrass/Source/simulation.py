@@ -60,7 +60,7 @@ def run_simulation():
                 del agent_list[index]
 
         # Show the world.
-        wsg_world.print_world(iteration)
+        wsg_world.print_world(agent_list, iteration)
 
         # Cultivate the terrain with grass patches.
         wsg_world.cultivate()
