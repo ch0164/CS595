@@ -88,7 +88,8 @@ class Carnivore(EatBehavior):
     def eat(self, prey_list, terrain):
         for index, prey in enumerate(prey_list):
             if self.agent.is_overlapping(prey):
-                del prey_list[index]  # Eat the prey
+                # Eat the prey
+                del prey_list[index]  # The sheep "dies" when it is deleted from the list
                 self.agent.energy += self.food_gain
 
 
@@ -99,7 +100,9 @@ class Herbivore(EatBehavior):
 
     def eat(self, prey_list, terrain):
         if self.agent.is_on_grass(terrain):
-            terrain[self.agent.row % self.world_size][self.agent.col % self.world_size] = DIRT_PATCH  # Eat the grass
+            # Eat the grass
+            patch = get_patch(terrain, self.world_size, self.agent.row, self.agent.col)
+            patch.patch_color = DIRT_PATCH
             self.agent.energy += self.food_gain
 
 

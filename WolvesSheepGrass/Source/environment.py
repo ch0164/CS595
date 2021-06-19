@@ -65,4 +65,12 @@ class Grass:
             print(BROWN_FONT + "🟫", end=end)
 
 
+def get_patch(terrain, world_size, row, col):
+    # Return the patch object specified by the position passed.
+    return terrain[row % world_size][col % world_size]
+
+def is_grass(terrain, world_size, row, col):
+    # Determine whether or not the specified location is a grass patch.
+    return get_patch(terrain, world_size, row, col).patch_color is GRASS_PATCH
+
 # IDE Likes Empty Line At End Of File

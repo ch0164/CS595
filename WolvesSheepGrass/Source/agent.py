@@ -11,6 +11,7 @@ Description:    The objective of this file is to contain class definitions for t
 from Utilities.common_imports import *
 from Utilities.constants import *
 from behavior import *
+from environment import *
 
 # Global Variable Declarations
 
@@ -40,7 +41,8 @@ class Agent(object):
             (self.col % self.world_size == other_agent.col % self.world_size)
 
     def is_on_grass(self, terrain):
-        return terrain[self.row % self.world_size][self.col % self.world_size] is GRASS_PATCH
+        # Determine whether or not the agent is on a grass patch.
+        return is_grass(terrain, self.world_size, self.row, self.col)
 
 
 class Wolf(Agent):

@@ -22,7 +22,7 @@ def run_simulation():
     # TODO: Implement scenario
 
     # Set simulation parameters.
-    iterations, tick = 100, 0.5
+    iterations, tick = 10, 0.5
 
     # Set environment parameters.
     world_size, grass_regrowth_time = 10, 5
@@ -31,7 +31,7 @@ def run_simulation():
     wsg_world = Environment(world_size, grass_regrowth_time)
 
     # Set initial conditions and parameters.
-    wolf_count, sheep_count = 2, 5
+    wolf_count, sheep_count = 0, 30
     wolf_food_gain, sheep_food_gain = 20, 4
     wolf_reproduction, sheep_reproduction = 0.05, 0.04
 
@@ -51,7 +51,10 @@ def run_simulation():
             if agent.energy <= 0:
                 del agent_list[index]
 
-        # Repopulate the terrain with grass patches.
+        # Show the world.
+        wsg_world.print_world()
+
+        # Cultivate the terrain with grass patches.
         wsg_world.cultivate()
 
         # For manual simulation only -- suspend execution to examine output.
