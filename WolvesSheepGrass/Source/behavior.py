@@ -9,6 +9,7 @@ Description:    The objective of this file is to contain classes related to the 
 # Project Related Imports
 from Utilities.common_imports import *
 from Utilities.constants import *
+from WolvesSheepGrass.Source.agent import Sheep
 from agent import *
 from environment import *
 
@@ -27,7 +28,7 @@ class MoveBehavior(object):
     def __init__(self, agent):
         self.agent = agent
 
-    def move(self):
+    def move(self, terrain=None, food_list=None, predator_list=None):
         pass
 
 
@@ -36,7 +37,7 @@ class WanderBehavior(MoveBehavior):
     def __init__(self, agent):
         MoveBehavior.__init__(self, agent)
 
-    def move(self):
+    def move(self, terrain=None, food_list=None, predator_list=None):
         # Get current location of agent.
         current_row, current_col = self.agent.row, self.agent.col
 
@@ -62,20 +63,56 @@ class WanderBehavior(MoveBehavior):
 
 class SeekBehavior(MoveBehavior):
 
-    def __init__(self, agent, world_size):
-        MoveBehavior.__init__(agent, world_size)
+    def __init__(self, agent):
+        MoveBehavior.__init__(self, agent)
 
-    def move(self):
-        pass
+    def move(self, terrain=None, food_list=None, predator_list=None):
+        # Note: food_list is a 1D list -- if food_list is grass, convert first.
+        # Get current location of agent.
+        current_row, current_col = self.agent.row, self.agent.col
+
+        # TODO: Is there a better way to go about this?
+        if isinstance(self.agent, Sheep):
+            food_list = sum(terrain, [])  # Convert to 1D list
+
+        # Find nearby food.
+        for row, col in [(current_row + i, current_col + j) for i in [-1, 1] for j in [-1, 1]]:
+            for food in food_list:
+                # If food is found, move in that direction.
+                if food.at_position(row, col, terrain):
+                    current_row, current_col = row, col
+                    break
+
+        # Update agent's position to current position.
+        self.agent.row, self.agent.col = current_row, current_col
+
+        # Decrement agent's energy by one.
+        self.agent.energy -= 1
 
 
 class FleeBehavior(MoveBehavior):
 
-    def __init__(self, agent, world_size):
-        MoveBehavior.__init__(agent, world_size)
+    def __init__(self, agent):
+        MoveBehavior.__init__(self, agent)
 
-    def move(self):
-        pass
+    def move(self, terrain=None, food_list=None, predator_list=None):
+        # Note: food_list is a 1D list -- if food_list is grass, convert first.
+        # Get current location of agent.
+        current_row, current_col = self.agent.row, self.agent.col
+
+        # Find nearby predators.
+        for row, col in [(current_row + i, current_col + j) for i in [-1, 1] for j in [-1, 1]]:
+            for predator in predator_list:
+                # If a predator is found, move in the opposite direction.
+                if predator.at_position(row, col):
+                    current_row, current_col = -row, -col
+                    break
+
+        # Update agent's position to current position.
+        self.agent.row, self.agent.col = current_row, current_col
+
+        # Decrement agent's energy by one.
+        self.agent.energy -= 1
 
 
 class EatBehavior(object):

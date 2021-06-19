@@ -39,13 +39,12 @@ def run_simulation():
     wolf_list = [Wolf(world_size, wolf_food_gain, wolf_reproduction) for _ in range(wolf_count)]
     sheep_list = [Sheep(world_size, sheep_food_gain, sheep_reproduction) for _ in range(sheep_count)]
     agent_list = wolf_list + sheep_list
-    print(agent_list)
 
     # Run the simulation.
     for iteration in range(iterations):
         for index, agent in enumerate(agent_list):
             # Move the agent according to its movement behavior.
-            agent.move()
+            agent.move(wsg_world.terrain, sheep_list, wolf_list)
 
             # Let the agent eat according to its diet.
             agent.eat(sheep_list, wsg_world.terrain)
@@ -61,6 +60,10 @@ def run_simulation():
 
         # Show the world.
         wsg_world.print_world(agent_list, iteration)
+
+        # Update the lists of wolves and sheep.
+        wolf_list = [agent for agent in agent_list if isinstance(agent, Wolf)]
+        sheep_list = [agent for agent in agent_list if isinstance(agent, Sheep)]
 
         # Cultivate the terrain with grass patches.
         wsg_world.cultivate()

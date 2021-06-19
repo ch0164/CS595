@@ -47,6 +47,7 @@ class Grass:
     def __init__(self, grass_regrowth_time):
         self.grass_regrowth_time = grass_regrowth_time
         self.countdown = random.randint(0, grass_regrowth_time - 1)
+        self.symbol = "."
 
         # There is a 50% chance upon generation that a patch is grass.
         if random.random() < 0.5:
@@ -68,6 +69,9 @@ class Grass:
             print(GREEN_FONT + symbol, end=end)
         else:
             print(BROWN_FONT + symbol, end=end)
+
+    def at_position(self, row, col, terrain):
+        return is_grass(terrain, len(terrain), row, col)
 
 
 def get_patch(terrain, world_size, row, col):

@@ -30,8 +30,8 @@ class Agent(object):
         self.eat_behavior = None
         self.reproduce_behavior = None
 
-    def move(self):
-        self.movement_behavior.move()
+    def move(self, terrain=None, food_list=None, predator_list=None):
+        self.movement_behavior.move(terrain, food_list, predator_list)
 
     def reproduce(self):
         pass
@@ -44,10 +44,9 @@ class Agent(object):
         # Determine whether or not the agent is on a grass patch.
         return is_grass(terrain, self.world_size, self.row, self.col)
 
-    def at_position(self, row, col):
+    def at_position(self, row, col, terrain=None):
         # Determine if the agent is at the specified position.
-        return self.row % self.world_size == row % self.world_size and \
-               self.col % self.world_size == col % self.world_size
+        return self.row % self.world_size == row and self.col % self.world_size == col
 
 
 class Wolf(Agent):
