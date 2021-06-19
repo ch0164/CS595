@@ -124,8 +124,8 @@ class ReproduceBehavior:
         self.reproduction_rate = reproduction_rate
 
     def reproduce(self):
-        # Produce a random number between 0 and 100.
-        rand_reproduce = random.random() * 100
+        # Produce a random number.
+        rand_reproduce = random.random()
 
         # If the random number is less than the agent's reproduction rate, reproduce.
         child_agent = None
