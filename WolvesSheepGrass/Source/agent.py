@@ -23,7 +23,7 @@ class Agent(object):
     def __init__(self, world_size):
         self.world_size = world_size
         self.symbol = ""
-        self.energy = 10
+        self.energy = 0
         self.row = random.randint(0, world_size - 1)
         self.col = random.randint(0, world_size - 1)
         self.movement_behavior = WanderBehavior(self)
@@ -50,8 +50,9 @@ class Wolf(Agent):
     def __init__(self, world_size, wolf_food_gain, wolf_reproduction):
         Agent.__init__(self, world_size)
         self.symbol = "x"
+        self.energy = 2 * wolf_food_gain
         self.eat_behavior = Carnivore(self, wolf_food_gain, world_size)
-        self.reproduce_behavior = ReproduceBehavior(wolf_reproduction)
+        self.reproduce_behavior = ReproduceBehavior(self, wolf_reproduction)
 
     def eat(self, prey_list, terrain):
         self.eat_behavior.eat(prey_list, terrain)
@@ -62,9 +63,10 @@ class Sheep(Agent):
     def __init__(self, world_size, sheep_food_gain, sheep_reproduction):
         Agent.__init__(self, world_size)
         self.symbol = "o"
+        self.energy = 2 * sheep_food_gain
         self.food_gain = sheep_food_gain
         self.eat_behavior = Herbivore(self, sheep_food_gain, world_size)
-        self.reproduce_behavior = ReproduceBehavior(sheep_reproduction)
+        self.reproduce_behavior = ReproduceBehavior(self, sheep_reproduction)
 
     def eat(self, prey_list, terrain):
         self.eat_behavior.eat(prey_list, terrain)
