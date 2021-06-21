@@ -168,9 +168,8 @@ class ReproduceBehavior:
         child_agent = None
 
         if rand_reproduce < self.reproduction_rate:
-            child_agent = copy.deepcopy(self.agent)  # Spawn a child of the agent.
-            child_agent.energy = 2 * child_agent.food_gain  # Set the child's initial energy.
             self.agent.energy /= 2  # Divide parent agent's energy by half.
+            child_agent = copy.deepcopy(self.agent)  # Spawn a child of the agent.
             child_agent.move()  # Move the child agent.
 
         # Return the child.
