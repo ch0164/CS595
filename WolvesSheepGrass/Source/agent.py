@@ -51,6 +51,7 @@ class Wolf(Agent):
     def __init__(self, world_size, wolf_food_gain, wolf_reproduction):
         Agent.__init__(self, world_size)
         self.symbol = "x"
+        self.label = "Wolf"
         self.energy = random.randint(0, 2 * wolf_food_gain - 1)
         self.eat_behavior = Carnivore(self, wolf_food_gain, world_size)
         self.reproduce_behavior = ReproduceBehavior(self, wolf_reproduction)
@@ -67,7 +68,8 @@ class Sheep(Agent):
     def __init__(self, world_size, sheep_food_gain, sheep_reproduction):
         Agent.__init__(self, world_size)
         self.symbol = "o"
-        self.energy = 2 * sheep_food_gain
+        self.label = "Sheep"
+        self.energy = random.randint(0, 2 * sheep_food_gain - 1)
         self.food_gain = sheep_food_gain
         self.eat_behavior = Herbivore(self, sheep_food_gain, world_size)
         self.reproduce_behavior = ReproduceBehavior(self, sheep_reproduction)
