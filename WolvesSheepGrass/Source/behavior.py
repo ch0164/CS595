@@ -9,7 +9,7 @@ Description:    The objective of this file is to contain classes related to the 
 # Project Related Imports
 from Utilities.common_imports import *
 from Utilities.constants import *
-from WolvesSheepGrass.Source.agent import Sheep
+import agent as ag
 from agent import *
 from environment import *
 
@@ -72,7 +72,7 @@ class SeekBehavior(MoveBehavior):
         current_row, current_col = self.agent.row, self.agent.col
 
         # TODO: Is there a better way to go about this?
-        if isinstance(self.agent, Sheep):
+        if isinstance(self.agent, ag.Sheep):
             food_list = sum(terrain, [])  # Convert to 1D list
 
         # Find nearby food.
@@ -131,12 +131,14 @@ class Carnivore(EatBehavior):
     def __init__(self, agent, food_gain, world_size):
         EatBehavior.__init__(self, agent, food_gain, world_size)
 
-    def eat(self, prey_list, terrain):
+    def eat(self, agent_list, terrain):
+        # Wolves only eat sheep.
+        prey_list = [agent for agent in agent_list if isinstance(agent, ag.Sheep)]
         for index, prey in enumerate(prey_list):
             if self.agent.is_overlapping(prey):
-                # Eat the prey
-                del prey_list[index]  # The sheep "dies" when it is deleted from the list
-                self.agent.energy += self.food_gain
+                self.agent.energy += self.food_gain  # Eat the prey
+                agent_list.remove(prey)  # The sheep "dies" when it is deleted from the list
+                break  # Only can eat one sheep per turn
 
 
 class Herbivore(EatBehavior):
@@ -145,15 +147,13 @@ class Herbivore(EatBehavior):
         EatBehavior.__init__(self, agent, food_gain, world_size)
 
     def eat(self, prey_list, terrain):
+        # Sheep only eat grass.
         if self.agent.is_on_grass(terrain):
-            # Eat the grass
+            self.agent.energy += self.food_gain  # Eat the grass
             patch = get_patch(terrain, self.world_size, self.agent.row, self.agent.col)
-            patch.patch_color = DIRT_PATCH
-            self.agent.energy += self.food_gain
+            patch.patch_color = DIRT_PATCH  # Eaten grass turns to dirt
 
 
-# TODO: Maybe we could add genetics into this...
-#  The child_agent could inherit a different movement behavior than the parent, i.e. recessive gene.
 class ReproduceBehavior:
 
     def __init__(self, agent, reproduction_rate):

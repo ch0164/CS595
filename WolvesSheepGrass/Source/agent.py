@@ -10,7 +10,7 @@ Description:    The objective of this file is to contain class definitions for t
 # Project Related Imports
 from Utilities.common_imports import *
 from Utilities.constants import *
-from behavior import *
+from WolvesSheepGrass.Source.behavior import *
 from environment import *
 
 # Global Variable Declarations
@@ -54,7 +54,7 @@ class Wolf(Agent):
     def __init__(self, world_size, wolf_food_gain, wolf_reproduction):
         Agent.__init__(self, world_size)
         self.symbol = "x"
-        self.energy = 2 * wolf_food_gain
+        self.energy = random.randint(0, 2 * wolf_food_gain - 1)
         self.eat_behavior = Carnivore(self, wolf_food_gain, world_size)
         self.reproduce_behavior = ReproduceBehavior(self, wolf_reproduction)
 

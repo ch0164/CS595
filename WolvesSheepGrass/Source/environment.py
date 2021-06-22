@@ -28,9 +28,16 @@ class Environment:
             for patch in patches:
                 patch.grow()
 
-    def print_world(self, agent_list, iteration):
+    def get_grass_count(self):
+        # Count how many patches are grass.
+        return len([grass for grass in sum(self.terrain, []) if grass.patch_color is GRASS_PATCH])
+
+    def get_dirt_count(self):
+        # The amount of dirt is the complement of grass.
+        return (self.world_size * self.world_size) - self.get_grass_count()
+
+    def print_world(self, iteration, agent_list, wolf_count, sheep_count):
         # Print world for reference.
-        print("Iteration {}:".format(iteration + 1))
         for row, patches in enumerate(self.terrain):
             for col, patch in enumerate(patches):
                 symbol = "."
@@ -39,7 +46,14 @@ class Environment:
                         symbol = agent.symbol
                 patch.show(symbol)
             print()
-        print(WHITE_FONT)
+        print(WHITE_FONT, end="")
+        self.print_population(iteration, wolf_count, sheep_count)
+        print()
+
+    def print_population(self, iteration, wolf_count, sheep_count):
+        # Print population for reference.
+        print("iteration={} wolves={} sheep={} grass={} dirt={}".format(
+            iteration, wolf_count, sheep_count, self.get_grass_count(), self.get_dirt_count()))
 
 
 class Grass:
