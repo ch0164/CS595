@@ -10,7 +10,7 @@ Description:    The objective of this file is to contain class definitions for t
 # Project Related Imports
 from Utilities.common_imports import *
 from Utilities.constants import *
-from WolvesSheepGrass.Source.behavior import *
+from behavior import *
 from environment import *
 
 # Global Variable Declarations
@@ -32,9 +32,6 @@ class Agent(object):
 
     def move(self, terrain=None, food_list=None, predator_list=None):
         self.movement_behavior.move(terrain, food_list, predator_list)
-
-    def reproduce(self):
-        pass
 
     def is_overlapping(self, other_agent):
         return (self.row % self.world_size == other_agent.row % self.world_size) and \
@@ -61,6 +58,9 @@ class Wolf(Agent):
     def eat(self, prey_list, terrain):
         self.eat_behavior.eat(prey_list, terrain)
 
+    def reproduce(self):
+        return self.reproduce_behavior.reproduce()
+
 
 class Sheep(Agent):
 
@@ -74,6 +74,9 @@ class Sheep(Agent):
 
     def eat(self, prey_list, terrain):
         self.eat_behavior.eat(prey_list, terrain)
+
+    def reproduce(self):
+        return self.reproduce_behavior.reproduce()
 
 
 # IDE Likes Empty Line At End Of File

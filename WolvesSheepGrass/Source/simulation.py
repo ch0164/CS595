@@ -22,19 +22,20 @@ def run_simulation():
     # TODO: Implement scenario
 
     # Set simulation parameters.
-    iterations, tick = 100, 0.5
+    iterations, iteration, tick = 100, 0, 0.5
 
     # Set environment parameters.
     # TODO: World size can differ in x and y dimensions.
-    world_size, grass_regrowth_time = 10, 20
+    world_size, grass_regrowth_time = 10, 10
 
     # Initialize the environment.
     wsg_world = Environment(world_size, grass_regrowth_time)
 
     # Set initial conditions and parameters.
-    wolf_count, sheep_count = 1, 50
-    wolf_food_gain, sheep_food_gain = 20, 4
-    wolf_reproduction, sheep_reproduction = 0.05, 0.04
+    wolf_count, sheep_count = 10, 200
+    wolf_food_gain, sheep_food_gain = 40, 4
+    wolf_reproduction, sheep_reproduction = 0.99, 0.04
+    max_sheep_count = 10_000
 
     # Initialize wolves and sheep, the agents in the simulation.
     wolf_list = [Wolf(world_size, wolf_food_gain, wolf_reproduction) for _ in range(wolf_count)]
@@ -42,7 +43,9 @@ def run_simulation():
     agent_list = wolf_list + sheep_list
 
     # Run the simulation.
-    for iteration in range(iterations):
+    # End conditions are 1) there are no wolves and no sheep, and 2) there are no wolves and max sheep is exceeded.
+    # while (wolf_list or sheep_list) and (wolf_list or len(sheep_list) <= max_sheep_count):
+    for _ in range(iterations):
         for index, agent in enumerate(agent_list):
             # Move the agent according to its movement behavior.
             agent.move(wsg_world.terrain, sheep_list, wolf_list)
@@ -68,6 +71,8 @@ def run_simulation():
 
         # Cultivate the terrain with grass patches.
         wsg_world.cultivate()
+
+        iteration += 1
 
         # For manual simulation only -- suspend execution to examine output.
         # time.sleep(tick)
