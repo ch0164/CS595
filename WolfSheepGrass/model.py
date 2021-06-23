@@ -24,7 +24,6 @@ class Wolf(Agent):
 
     def move(self):
         # TODO: How should the agent rotate and move?
-
         self.x += random.random()
         self.y += 1 - self.x
         self.model.grid.move_agent(self, (self.x, self.y))
@@ -60,7 +59,7 @@ class Sheep(Agent):
         self.reproduce()
 
     def move(self):
-        # Need to work on how to "turn".
+        # TODO: Need to work on how to "turn".
 
         self.x += random.random()
         self.y += 1 - self.x
@@ -79,14 +78,8 @@ class Sheep(Agent):
             self.energy /= 2
             child_sheep = self.breed(self.energy, (self.x, self.y))  # Deep copy is really slow
             # TODO: Rotate and move the child 1 unit.
-            if random.random() < 0.5:
-                child_sheep.x -= 1
-            else:
-                child_sheep.x += 1
-            if random.random() < 0.5:
-                child_sheep.y -= 1
-            else:
-                child_sheep.y += 1
+            child_sheep.x += random.random()
+            child_sheep.y += 1 - self.x
             self.model.sheep_schedule.add(child_sheep)
             self.model.grid.place_agent(child_sheep, (child_sheep.x, child_sheep.y))
             self.model.sheep_count += 1

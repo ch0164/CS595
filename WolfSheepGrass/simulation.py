@@ -4,7 +4,7 @@ from model import *
 
 def run_simulation():
     # Set environment parameters.
-    world_width, world_length = 25, 25
+    world_width, world_length = 50, 50
     grass_regrowth_time = 30
 
     # Set initial conditions and parameters.
