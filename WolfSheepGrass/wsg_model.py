@@ -39,7 +39,7 @@ class Wolf(Agent):
             self.energy += self.food_gain
 
     def reproduce(self):
-        if random.random() < self.reproduction_rate:
+        if random.uniform(0, 1) < self.reproduction_rate:
             self.energy /= 2
             child_wolf = self.breed(self.energy, (self.x, self.y))  # Deep copy is really slow
             # TODO: Rotate and move the child 1 unit.
@@ -115,7 +115,7 @@ class Patch(Agent):
         self.label = "Patch"
 
         # There is a 50% chance upon generation that a patch is grass.
-        if random.random() < 0.5:
+        if random.uniform(0, 1) < 0.5:
             self.patch_color = DIRT_PATCH
         else:
             self.patch_color = GRASS_PATCH
@@ -157,8 +157,8 @@ class WolfSheepGrass(Model):
         # Add agents to the model.
         # Add initial sheep (they move first in the NetLogo simulation).
         for _ in range(initial_sheep):
-            x = self.random.random() * width
-            y = self.random.random() * height
+            x = self.random.uniform(0, 1) * width
+            y = self.random.uniform(0, 1) * height
             pos = (x, y)
             sheep = Sheep(self.id, self, pos, sheep_food_gain, sheep_reproduction_rate)
             self.id += 1

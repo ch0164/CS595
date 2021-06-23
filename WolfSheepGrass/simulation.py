@@ -1,6 +1,5 @@
-from Utilities.constants import *
-from Utilities.common_imports import *
-from model import *
+from wsg_model import *
+from wsg_visualization import *
 
 def run_simulation():
     # Set environment parameters.
@@ -21,4 +20,6 @@ def run_simulation():
 
 
 if __name__ == "__main__":
-    run_simulation()
+    # run_simulation()
+    run_server()
+
