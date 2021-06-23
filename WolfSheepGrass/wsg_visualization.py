@@ -3,7 +3,7 @@ from mesa.visualization.modules import CanvasGrid                  # Type of gri
 from mesa.visualization.ModularVisualization import ModularServer  # Creates the new server to host the model
 from mesa.visualization.UserParam import UserSettableParameter     # Allows UI elements like sliders
 
-
+# TODO: Might need to create a visualization module to support ContinuousSpace (CanvasGrid only works for Grids)
 def agent_portrayal(agent):
     # Set up portrayal dictionary which stores attributes of the agent.
     portrayal = {"Shape" : "circle",  # Agent shape
