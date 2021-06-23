@@ -1,8 +1,9 @@
 from Utilities.common_imports import *
 from Utilities.constants import *
-from mesa.space import ContinuousSpace, SingleGrid
 from mesa import Agent, Model
 from mesa.time import RandomActivation
+from mesa.space import ContinuousSpace, SingleGrid
+from mesa.datacollection import DataCollector
 
 
 class Wolf(Agent):
@@ -148,15 +149,17 @@ class WolfSheepGrass(Model):
         self.agent_count = initial_wolves + initial_sheep
         self.max_sheep = max_sheep
         self.id = 1  # ID unique to each agent in the simulation
+
         # Instantiate continuous, toroidal grid for movement of wolves and sheep.
         self.grid = ContinuousSpace(width, height, True)
         # Instantiate discrete, toroidal grid for patches of grass and dirt.
         self.terrain = SingleGrid(width, height, True)
+
         # Initialize the scheduler, which activates agents in a random order per step/tick.
         self.sheep_schedule = RandomActivation(self)  # Equivalent to Netlogo "ask agents"
         self.wolf_schedule = RandomActivation(self)
         self.patch_schedule = RandomActivation(self)
-        # Add agents to the model.
+
         # Add initial sheep (they move first in the NetLogo simulation).
         for _ in range(initial_sheep):
             x = self.random.uniform(0, 1) * width
@@ -166,6 +169,7 @@ class WolfSheepGrass(Model):
             self.id += 1
             self.sheep_schedule.add(sheep)
             self.grid.place_agent(sheep, pos)
+
         # Add initial wolves.
         for _ in range(initial_wolves):
             x = self.random.random() * width
@@ -175,6 +179,7 @@ class WolfSheepGrass(Model):
             self.wolf_schedule.add(wolf)
             self.id += 1
             self.grid.place_agent(wolf, pos)
+
         # Initialize environment.
         for y in range(height):
             for x in range(width):
@@ -184,6 +189,11 @@ class WolfSheepGrass(Model):
                 self.patch_schedule.add(patch)
                 self.id += 1
                 self.terrain.place_agent(patch, (x, y))
+
+        # Define DataCollector instance, which tracks the population of wolves and sheep as well as the number of grass.
+        self.data_collector = DataCollector(model_reporters={"Wolves": self.wolf_count,
+                                                             "Sheep": self.sheep_count,
+                                                             "Grass": self.grass_count})
 
     def remove(self, agent):
         # Remove agent from simulation.
@@ -222,9 +232,11 @@ class WolfSheepGrass(Model):
         print()
 
     def step(self):
-        self.wolf_schedule.step()   # Move the wolves,
-        self.sheep_schedule.step()  # and sheep,
-        self.patch_schedule.step()  # and grow grass.
+        self.wolf_schedule.step()          # Move the wolves,
+        self.sheep_schedule.step()         # and sheep,
+        self.patch_schedule.step()         # and grow grass.
+
+        self.data_collector.collect(self)  # Collect population and grass data.
 
     def run_model(self):
         # Continue running the model agents are annihilated or until sheep inherit the earth.
