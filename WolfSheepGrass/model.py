@@ -29,6 +29,7 @@ class Wolf(Agent):
         self.model.grid.move_agent(self, (self.x, self.y))
 
     def eat(self):
+        # TODO: How to get that wolf and sheep share same patch? Maybe adding these agents to terrain (as a MultiGrid)?
         # Eat sheep which share the same patch
         int_pos = (int(self.x) % self.model.width, int(self.y) % self.model.height)
         sheep_list = [agent.label == "Sheep" for agent in self.model.grid.get_neighbors(int_pos, 1)]
@@ -38,7 +39,21 @@ class Wolf(Agent):
             self.energy += self.food_gain
 
     def reproduce(self):
-        pass
+        if random.random() < self.reproduction_rate:
+            self.energy /= 2
+            child_wolf = self.breed(self.energy, (self.x, self.y))  # Deep copy is really slow
+            # TODO: Rotate and move the child 1 unit.
+            child_wolf.x += random.random()
+            child_wolf.y += 1 - self.x
+            self.model.sheep_schedule.add(child_wolf)
+            self.model.grid.place_agent(child_wolf, (child_wolf.x, child_wolf.y))
+            self.model.sheep_count += 1
+
+    def breed(self, energy, pos):
+        child = Wolf(self.model.id, self.model, pos, self.food_gain, self.reproduction_rate)
+        self.energy = energy
+        self.model.id += 1
+        return child
 
 
 class Sheep(Agent):
@@ -182,6 +197,7 @@ class WolfSheepGrass(Model):
             pass
 
     def print_terrain(self):
+        # Print terrain for reference.
         row, col = 0, 0
         for patch in self.terrain:
             if patch.patch_color is GRASS_PATCH:
