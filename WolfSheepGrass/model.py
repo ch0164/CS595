@@ -56,7 +56,7 @@ class Sheep(Agent):
         self.energy -= 1
         self.eat()
         if self.energy <= 0:
-            self.model.sheep_schedule.remove(self)
+            self.model.remove(self)
         self.reproduce()
 
     def move(self):
@@ -79,8 +79,14 @@ class Sheep(Agent):
             self.energy /= 2
             child_sheep = self.breed(self.energy, (self.x, self.y))  # Deep copy is really slow
             # TODO: Rotate and move the child 1 unit.
-            child_sheep.x += random.random()
-            child_sheep.y += random.random()
+            if random.random() < 0.5:
+                child_sheep.x -= 1
+            else:
+                child_sheep.x += 1
+            if random.random() < 0.5:
+                child_sheep.y -= 1
+            else:
+                child_sheep.y += 1
             self.model.sheep_schedule.add(child_sheep)
             self.model.grid.place_agent(child_sheep, (child_sheep.x, child_sheep.y))
             self.model.sheep_count += 1
@@ -174,9 +180,11 @@ class WolfSheepGrass(Model):
         if agent.label == "Wolf":
             self.wolf_schedule.remove(agent)
             self.grid.remove_agent(agent)
+            self.wolf_count -= 1
         elif agent.label == "Sheep":
             self.sheep_schedule.remove(agent)
             self.grid.remove_agent(agent)
+            self.sheep_count -= 1
         elif agent.label == "Patch":
             pass
 
@@ -210,13 +218,15 @@ class WolfSheepGrass(Model):
     def run_model(self):
         # Continue running the model agents are annihilated or until sheep inherit the earth.
         iteration = 0
-        are_annihilated = self.wolf_count == 0 or self.sheep_count == 0
-        sheep_inherit = self.wolf_count == 0 or self.sheep_count > self.max_sheep
-        while (are_annihilated or sheep_inherit):  # Should be not, but this is to test
+        are_annihilated = self.wolf_count <= 0 and self.sheep_count <= 0
+        sheep_inherit = self.wolf_count <= 0 and self.sheep_count > self.max_sheep
+        while not (are_annihilated or sheep_inherit):
             self.step()
-            # self.print_population(iteration)
+            self.print_population(iteration)
             self.print_terrain()
             iteration += 1
+            are_annihilated = self.wolf_count <= 0 and self.sheep_count <= 0
+            sheep_inherit = self.wolf_count <= 0 and self.sheep_count > self.max_sheep
         if are_annihilated:
             pass  # No message for this
         else:

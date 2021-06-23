@@ -8,7 +8,7 @@ def run_simulation():
     grass_regrowth_time = 30
 
     # Set initial conditions and parameters.
-    wolf_count, sheep_count = 0, 20
+    wolf_count, sheep_count = 0, 100
     wolf_food_gain, sheep_food_gain = 20, 4
     wolf_reproduction, sheep_reproduction = 0.05, 0.04
     max_sheep = 10_000
