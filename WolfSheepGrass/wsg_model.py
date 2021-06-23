@@ -15,6 +15,7 @@ class Wolf(Agent):
         self.label = "Wolf"
 
     def step(self):
+        # Wolf Logic Loop
         self.move()
         self.energy -= 1
         self.eat()
@@ -66,6 +67,7 @@ class Sheep(Agent):
         self.label = "Sheep"
 
     def step(self):
+        # Sheep Logic Loop
         self.move()
         self.energy -= 1
         self.eat()

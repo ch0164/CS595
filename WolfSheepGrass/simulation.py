@@ -3,7 +3,7 @@ from wsg_visualization import *
 
 def run_simulation():
     # Set environment parameters.
-    world_width, world_length = 50, 50
+    world_width, world_length = 25, 25
     grass_regrowth_time = 30
 
     # Set initial conditions and parameters.
@@ -20,6 +20,6 @@ def run_simulation():
 
 
 if __name__ == "__main__":
-    # run_simulation()
-    run_server()
+    run_simulation()
+    # run_server()
 
