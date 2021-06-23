@@ -26,14 +26,14 @@ def run_simulation():
 
     # Set environment parameters.
     # TODO: World size can differ in x and y dimensions.
-    world_size, grass_regrowth_time = 25, 10
+    world_size, grass_regrowth_time = 25, 30
 
     # Initialize the environment.
     wsg_world = Environment(world_size, grass_regrowth_time)
 
     # Set initial conditions and parameters.
-    wolf_count, sheep_count = 20, 40
-    wolf_food_gain, sheep_food_gain = 40, 4
+    wolf_count, sheep_count = 50, 100
+    wolf_food_gain, sheep_food_gain = 20, 4
     wolf_reproduction, sheep_reproduction = 0.05, 0.04
     max_sheep_count = 10_000
 
