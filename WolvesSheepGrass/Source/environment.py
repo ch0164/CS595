@@ -20,7 +20,7 @@ class Environment:
 
     def __init__(self, world_size, grass_regrowth_time):
         self.world_size = world_size
-        self.terrain = [[Grass(grass_regrowth_time) for _ in range(world_size)] for _ in range(world_size)]
+        self.terrain = [[Patch(grass_regrowth_time) for _ in range(world_size)] for _ in range(world_size)]
 
     def cultivate(self):
         # Determine if it is time for dirt patch to regrow into a grass patch.
@@ -56,7 +56,7 @@ class Environment:
             iteration, wolf_count, sheep_count, self.get_grass_count(), self.get_dirt_count()))
 
 
-class Grass:
+class Patch:
 
     def __init__(self, grass_regrowth_time):
         self.grass_regrowth_time = grass_regrowth_time

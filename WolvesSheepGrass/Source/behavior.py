@@ -42,14 +42,12 @@ class WanderBehavior(MoveBehavior):
         current_row, current_col = self.agent.row, self.agent.col
 
         # Move agent in random direction.
-        row_rand = random.random()
-        if row_rand < 0.5:
+        if random.random() < 0.5:
             current_row -= 1
         else:
             current_row += 1
 
-        col_rand = random.random()
-        if col_rand < 0.5:
+        if random.random() < 0.5:
             current_col -= 1
         else:
             current_col += 1
