@@ -25,21 +25,25 @@ def agent_portrayal(agent):
     elif agent.label == "Sheep":
         # Sheep are displayed above patches and below wolves as white circles.
         portrayal["Shape"], portrayal["r"], portrayal["Color"], portrayal["Layer"] = "circle", 0.5, "white", 1
+        if agent.energy < 5:
+            portrayal["Color"] = "red"
 
     # Is the agent a wolf?
     elif agent.label == "Wolf":
         # Wolves are displayed above patches and sheep as black squares.
         portrayal["Shape"], portrayal["w"], portrayal["h"] = "rect", 0.5, 0.5
         portrayal["Color"], portrayal["Layer"] = "black", 2
+        if agent.energy < 5:
+            portrayal["Color"] = "red"
 
     return portrayal
 
 
 def run_server(world_width, world_height):
-    grid = CanvasGrid(agent_portrayal, world_width, world_height, 750, 750)
+    grid = CanvasGrid(agent_portrayal, world_width, world_height, 700, 700)
     population_dicts = [dict(Label="Sheep Count", Color="blue"),
                         dict(Label="Wolf Count", Color="red"),
-                        dict(Label="Grass / 4 Count", Color="green")]
+                        dict(Label="Grass / 5 Count", Color="green")]
     population_chart = ChartModule(population_dicts, data_collector_name="dc")
 
     number_of_wolves_slider = UserSettableParameter(

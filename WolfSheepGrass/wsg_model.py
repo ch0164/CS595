@@ -217,7 +217,7 @@ class Patch(Agent):
         # Grass regrowth time defines how many steps a patch of dirt will take before growing grass.
         self.grass_regrowth_time = grass_regrowth_time
 
-        # Countdown is used to determine when grass grows back.
+        # Countdown is used to determine when grass grows back. Strictly less than grass regrowth time.
         self.countdown = self.model.random.randint(0, grass_regrowth_time)
 
         # There is a 50% chance upon generation that a patch is grass.
@@ -304,14 +304,38 @@ class WolfSheepGrass(Model):
                 self.grid.place_agent(patch, (x, y))
 
         # Define DataCollector instance, which tracks the population of wolves and sheep as well as the number of grass.
-        get_sheep_count = lambda m: m.sheep_schedule.get_agent_count()
-        get_wolf_count  = lambda m: m.wolf_schedule.get_agent_count()
-        get_grass_count = lambda m: \
-            len([patch for patch in m.patch_schedule.agents if patch.patch_color is GRASS_PATCH]) / 4
-        self.dc = DataCollector(model_reporters={"Sheep Count": get_sheep_count,
-                                                 "Wolf Count": get_wolf_count,
-                                                 "Grass / 4 Count": get_grass_count},
+        self.dc = DataCollector(model_reporters={"Sheep Count": self.get_sheep_count,
+                                                 "Wolf Count": self.get_wolf_count,
+                                                 "Grass / 5 Count": self.get_grass_count},
                                                  agent_reporters={})
+
+    def step(self):
+        # After agents have moved, collect sheep, wolf, and grass populations.
+        self.dc.collect(self)
+
+        # First, move the sheep.
+        self.sheep_schedule.step()
+
+        # Then, move the wolves.
+        self.wolf_schedule.step()
+
+        # Finally, grow the grass.
+        self.patch_schedule.step()
+
+        # Get wolf and sheep counts.
+        wolf_count, sheep_count = self.get_wolf_count(), self.get_sheep_count()
+
+        # Are the wolves and sheep annihilated?
+        are_annihilated = wolf_count <= 0 and sheep_count <= 0
+
+        # Do the sheep rule the world?
+        sheep_inherit = wolf_count <= 0 and sheep_count > self.max_sheep
+
+        if are_annihilated:
+            exit(1)  # No message for this
+        elif sheep_inherit:
+            print("The sheep have inherited the world.")
+            exit(2)
 
     def remove(self, agent):
         # Is the agent a wolf?
@@ -328,79 +352,13 @@ class WolfSheepGrass(Model):
             self.sheep_schedule.remove(agent)
             del agent
 
-
     def integer_position(self, x_pos, y_pos):
         return int(x_pos) % self.width, int(y_pos) % self.height
 
-    def print_terrain(self):
-        # Print terrain for reference.
-        row, col = 0, 0
-        patches = []
-        for x in range(self.width):
-            for y in range(self.height):
-                pos = (x, y)
-                patch = [agent for agent in self.grid.get_cell_list_contents([pos]) if agent.label == "Patch"][0]
-                patches.append(patch)
-        for patch in patches:
-            if patch.patch_color is GRASS_PATCH:
-                print(GREEN_FONT + "🟩", end="")
-            else:
-                print(BROWN_FONT + "🟩", end="")
-            col += 1
-            if col == self.width:
-                col = 0
-                row += 1
-                print()
-            if row == self.height:
-                row = 0
-                print(WHITE_FONT)
+    def get_sheep_count(self):
+        return self.sheep_schedule.get_agent_count()
+    def get_wolf_count(self):
+        return self.wolf_schedule.get_agent_count()
+    def get_grass_count(self):
+        return len([patch for patch in self.patch_schedule.agents if patch.patch_color is GRASS_PATCH]) / 5
 
-    def print_population(self, iteration):
-        # Print population for reference.
-        print("iteration={} wolves={} sheep={} grass={}".format(
-            iteration, self.wolf_count, self.sheep_count, self.grass_count))
-        print()
-
-    def step(self):
-        # After agents have moved, collect sheep, wolf, and grass populations.
-        self.dc.collect(self)
-
-        # First, move the sheep.
-        self.sheep_schedule.step()
-
-        # Then, move the wolves.
-        self.wolf_schedule.step()
-
-        # Finally, grow the grass.
-        self.patch_schedule.step()
-
-    def run_model(self):
-        iteration = 0  # Keep track of current iteration (remove later)
-        self.get_wolf_count()
-        self.dc.collect(self)
-        # Are the wolves and sheep annihilated?
-        are_annihilated = self.wolf_count <= 0 and self.sheep_count <= 0
-
-        # Do the sheep rule the world?
-        sheep_inherit = self.wolf_count <= 0 and self.sheep_count > self.max_sheep
-
-        # Continue running the model agents are annihilated or until sheep inherit the earth.
-        while not (are_annihilated or sheep_inherit):
-            self.print_population(iteration)  # Remove later
-            self.print_terrain()  # Remove later
-
-            # Proceed one step or tick.
-            self.step()
-
-            iteration += 1
-
-            # Reevaluate stop conditions.
-            are_annihilated = self.wolf_count <= 0 and self.sheep_count <= 0
-            sheep_inherit = self.wolf_count <= 0 and self.sheep_count > self.max_sheep
-
-        # Print a special message if the sheep inherit the earth.
-        if sheep_inherit:
-            print("The sheep have inherited the earth.")
-        # No message for when sheep and wolves all die out. In either case, end the simulation.
-        else:
-            pass
