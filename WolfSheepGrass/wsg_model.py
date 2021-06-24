@@ -4,12 +4,13 @@ from mesa import Agent, Model
 from mesa.time import RandomActivation
 from mesa.space import MultiGrid
 from mesa.datacollection import DataCollector
+import uuid
 
 
 class Wolf(Agent):
 
-    def __init__(self, unique_id, model, x_pos, y_pos, food_gain, reproduction_rate):
-        super().__init__(unique_id, model)
+    def __init__(self, model, x_pos, y_pos, food_gain, reproduction_rate):
+        super().__init__(model.next_id(), model)
         # Label the agent as a Wolf.
         self.label = "Wolf"
 
@@ -85,7 +86,7 @@ class Wolf(Agent):
             self.energy /= 2
 
             # Create one new agent of the parent's type.
-            child_wolf = self.breed(self.energy, self.x_pos, self.y_pos)
+            child_wolf = Wolf(self.model, self.x_pos, self.y_pos, self.food_gain, self.reproduction_rate)
 
             # Rotate the new agent between 0 and 360 degrees.
             child_wolf.direction += self.model.random.uniform(0, 2 * np.pi)
@@ -101,30 +102,16 @@ class Wolf(Agent):
                 child_wolf.y_pos = self.model.height + child_wolf.y_pos
 
             # Add the agent to the scheduler.
-            self.model.sheep_schedule.add(child_wolf)
+            self.model.wolf_schedule.add(child_wolf)
 
             # Add the agent to the grid.
             self.model.grid.place_agent(child_wolf, self.model.integer_position(child_wolf.x_pos, child_wolf.y_pos))
 
-    def breed(self, energy, x_pos, y_pos):
-        # Create a new child at the current agent's position.
-        child = Sheep(self.model.id, self.model, x_pos, y_pos, self.food_gain, self.reproduction_rate)
-
-        # Give half of the current agent's energy to the child.
-        child.energy = energy
-
-        # Update id and population count.
-        self.model.id += 1
-        self.model.wolf_count += 1
-
-        # Return the child agent.
-        return child
-
 
 class Sheep(Agent):
 
-    def __init__(self, unique_id, model, x_pos, y_pos, food_gain, reproduction_rate):
-        super().__init__(unique_id, model)
+    def __init__(self, model, x_pos, y_pos, food_gain, reproduction_rate):
+        super().__init__(model.next_id(), model)
 
         # Label the agent as a Sheep.
         self.label = "Sheep"
@@ -187,7 +174,6 @@ class Sheep(Agent):
         if patch.patch_color is GRASS_PATCH:
             # The grass is gone, so set the patch to dirt.
             patch.patch_color = DIRT_PATCH
-            self.model.grass_count -= 1
 
             # Add energy from eating the grass.
             self.energy += self.food_gain
@@ -199,7 +185,7 @@ class Sheep(Agent):
             self.energy /= 2
 
             # Create one new agent of the parent's type.
-            child_sheep = self.breed(self.energy, self.x_pos, self.y_pos)
+            child_sheep = Sheep(self.model, self.x_pos, self.y_pos, self.food_gain, self.reproduction_rate)
 
             # Rotate the new agent between 0 and 360 degrees.
             child_sheep.direction += self.model.random.uniform(0, 2 * np.pi)
@@ -220,25 +206,11 @@ class Sheep(Agent):
             # Add the agent to the grid.
             self.model.grid.place_agent(child_sheep, self.model.integer_position(child_sheep.x_pos, child_sheep.y_pos))
 
-    def breed(self, energy, x_pos, y_pos):
-        # Create a new child at the current agent's position.
-        child = Sheep(self.model.id, self.model, x_pos, y_pos, self.food_gain, self.reproduction_rate)
-
-        # Give half of the current agent's energy to the child.
-        child.energy = energy
-
-        # Update id and population count.
-        self.model.id += 1
-        self.model.sheep_count += 1
-
-        # Return the child agent.
-        return child
-
 
 class Patch(Agent):
 
-    def __init__(self, unique_id, model, grass_regrowth_time):
-        super().__init__(unique_id, model)
+    def __init__(self, model, grass_regrowth_time):
+        super().__init__(model.next_id(), model)
         # Label the agent as a Sheep.
         self.label = "Patch"
 
@@ -253,7 +225,6 @@ class Patch(Agent):
             self.patch_color = DIRT_PATCH
         else:
             self.patch_color = GRASS_PATCH
-            self.model.grass_count += 1
 
     def step(self):
         # Grow this patch of grass for every step.
@@ -264,7 +235,6 @@ class Patch(Agent):
         if self.patch_color is DIRT_PATCH and self.countdown <= 0:
             self.patch_color = GRASS_PATCH
             self.countdown = self.grass_regrowth_time
-            self.model.grass_count += 1
 
         # Otherwise, decrement the countdown timer by one.
         else:
@@ -280,14 +250,8 @@ class WolfSheepGrass(Model):
         # Width and height define the x- and y-dimensions of the world, respectively.
         self.width, self.height = width, height
 
-        # Keep track of the number of wolves, sheep, and grass over the run of the simulation.
-        self.wolf_count, self.sheep_count, self.grass_count = initial_wolves, initial_sheep, 0
-
         # Don't let the number of sheep grow too large.
         self.max_sheep = max_sheep
-
-        # Each agent needs to have a unique id.
-        self.id = 0
 
         # Instantiate discrete, toroidal grid to contain all wolves, sheep, and grass.
         self.grid = MultiGrid(width, height, True)
@@ -304,10 +268,7 @@ class WolfSheepGrass(Model):
             y_pos = self.random.uniform(0, height)
 
             # Instantiate the new Sheep object with the given coordinates and parameters.
-            sheep = Sheep(self.id, self, x_pos, y_pos, sheep_food_gain, sheep_reproduction_rate)
-
-            # Update the unique id for the next agent.
-            self.id += 1
+            sheep = Sheep(self, x_pos, y_pos, sheep_food_gain, sheep_reproduction_rate)
 
             # Add the new sheep to its respective scheduler.
             self.sheep_schedule.add(sheep)
@@ -322,10 +283,7 @@ class WolfSheepGrass(Model):
             y_pos = self.random.uniform(0, height)
 
             # Instantiate the new Wolf object with the given coordinates and parameters.
-            wolf = Wolf(self.id, self, x_pos, y_pos, wolf_food_gain, wolf_reproduction_rate)
-
-            # Update the unique id for the next agent.
-            self.id += 1
+            wolf = Wolf(self, x_pos, y_pos, wolf_food_gain, wolf_reproduction_rate)
 
             # Add the new wolf to its respective scheduler.
             self.wolf_schedule.add(wolf)
@@ -337,10 +295,7 @@ class WolfSheepGrass(Model):
         for x in range(width):
             for y in range(height):
                 # Instantiate the new Patch object with the given grass regrowth rate.
-                patch = Patch(self.id, self, grass_regrowth_rate)
-
-                # Update the unique id for the next agent.
-                self.id += 1
+                patch = Patch(self, grass_regrowth_rate)
 
                 # Add the new patch of grass or dirt to its respective scheduler.
                 self.patch_schedule.add(patch)
@@ -350,7 +305,7 @@ class WolfSheepGrass(Model):
 
         # Define DataCollector instance, which tracks the population of wolves and sheep as well as the number of grass.
         get_sheep_count = lambda m: m.sheep_schedule.get_agent_count()
-        get_wolf_count = lambda m: m.wolf_schedule.get_agent_count()
+        get_wolf_count  = lambda m: m.wolf_schedule.get_agent_count()
         get_grass_count = lambda m: \
             len([patch for patch in m.patch_schedule.agents if patch.patch_color is GRASS_PATCH]) / 4
         self.dc = DataCollector(model_reporters={"Sheep Count": get_sheep_count,
@@ -362,22 +317,17 @@ class WolfSheepGrass(Model):
         # Is the agent a wolf?
         if agent.label == "Wolf":
             # Remove the wolf from the scheduler and from the agent grid.
-            self.wolf_schedule.remove(agent)
             self.grid.remove_agent(agent)
+            self.wolf_schedule.remove(agent)
             del agent
-
-            # Decrement the wolf count.
-            self.wolf_count -= 1
 
         # Is the agent a sheep?
         elif agent.label == "Sheep":
             # Remove the sheep from the scheduler and from the agent grid.
-            self.sheep_schedule.remove(agent)
             self.grid.remove_agent(agent)
+            self.sheep_schedule.remove(agent)
             del agent
 
-            # Decrement the sheep count.
-            self.sheep_count -= 1
 
     def integer_position(self, x_pos, y_pos):
         return int(x_pos) % self.width, int(y_pos) % self.height

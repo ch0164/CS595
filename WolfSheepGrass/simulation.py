@@ -2,11 +2,11 @@ from wsg_model import *
 from wsg_visualization import *
 
 # Set environment parameters.
-world_width, world_length = 50, 50
+world_width, world_length = 51, 51  # NetLogo default is 51x51
 grass_regrowth_time = 30
 
 # Set initial conditions and parameters.
-wolf_count, sheep_count = 50, 100
+wolf_count, sheep_count = 2, 3
 wolf_food_gain, sheep_food_gain = 20, 4
 wolf_reproduction, sheep_reproduction = 0.05, 0.04
 max_sheep = 10_000
