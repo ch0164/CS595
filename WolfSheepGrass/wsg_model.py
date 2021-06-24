@@ -25,7 +25,6 @@ class Wolf(Agent):
         # The wolf's energy is set between 0 and twice its food gain.
         self.energy = 2 * self.model.random.randrange(0, food_gain)
 
-
     def step(self):
         # Move the wolf.
         self.move()
@@ -42,7 +41,6 @@ class Wolf(Agent):
 
         # Reproduce.
         self.reproduce()
-
 
     def move(self):
         # Turn left between 0 to 50 degrees (or 5pi/18 radians).
@@ -64,7 +62,6 @@ class Wolf(Agent):
         # Move the agent on the grid.
         self.model.grid.move_agent(self, self.model.integer_position(self.x_pos, self.y_pos))
 
-
     def eat(self):
         # Get a list of all sheep on the same patch as the wolf.
         int_pos = self.model.integer_position(self.x_pos, self.y_pos)
@@ -80,7 +77,6 @@ class Wolf(Agent):
 
             # Add energy from eating the sheep.
             self.energy += self.food_gain
-
 
     def reproduce(self):
         # If a number between 0 and 1 is less than the agent's reproduction rate, reproduce.
@@ -109,7 +105,6 @@ class Wolf(Agent):
 
             # Add the agent to the grid.
             self.model.grid.place_agent(child_wolf, self.model.integer_position(child_wolf.x_pos, child_wolf.y_pos))
-
 
     def breed(self, energy, x_pos, y_pos):
         # Create a new child at the current agent's position.
@@ -146,8 +141,6 @@ class Sheep(Agent):
         # The sheep's energy is set between 0 and twice its food gain.
         self.energy = 2 * self.model.random.randrange(0, food_gain)
 
-
-
     def step(self):
         # Move the sheep.
         self.move()
@@ -164,7 +157,6 @@ class Sheep(Agent):
 
         # Reproduce.
         self.reproduce()
-
 
     def move(self):
         # Turn left between 0 to 50 degrees (or 5pi/18 radians).
@@ -186,7 +178,6 @@ class Sheep(Agent):
         # Move the agent on the grid.
         self.model.grid.move_agent(self, self.model.integer_position(self.x_pos, self.y_pos))
 
-
     def eat(self):
         # Get the patch at the sheep's position.
         int_pos = self.model.integer_position(self.x_pos, self.y_pos)
@@ -200,7 +191,6 @@ class Sheep(Agent):
 
             # Add energy from eating the grass.
             self.energy += self.food_gain
-
 
     def reproduce(self):
         # If a number between 0 and 1 is less than the agent's reproduction rate, reproduce.
@@ -229,7 +219,6 @@ class Sheep(Agent):
 
             # Add the agent to the grid.
             self.model.grid.place_agent(child_sheep, self.model.integer_position(child_sheep.x_pos, child_sheep.y_pos))
-
 
     def breed(self, energy, x_pos, y_pos):
         # Create a new child at the current agent's position.
@@ -266,11 +255,9 @@ class Patch(Agent):
             self.patch_color = GRASS_PATCH
             self.model.grass_count += 1
 
-
     def step(self):
         # Grow this patch of grass for every step.
         self.grow()
-
 
     def grow(self):
         # If the patch is brown and countdown is not positive, set patch color to green and reset the countdown timer.
@@ -362,10 +349,14 @@ class WolfSheepGrass(Model):
                 self.grid.place_agent(patch, (x, y))
 
         # Define DataCollector instance, which tracks the population of wolves and sheep as well as the number of grass.
-        self.data_collector = DataCollector(model_reporters={"Wolves": self.wolf_count,
-                                                             "Sheep": self.sheep_count,
-                                                             "Grass": self.grass_count})
-
+        get_sheep_count = lambda m: m.sheep_schedule.get_agent_count()
+        get_wolf_count = lambda m: m.wolf_schedule.get_agent_count()
+        get_grass_count = lambda m: \
+            len([patch for patch in m.patch_schedule.agents if patch.patch_color is GRASS_PATCH]) / 4
+        self.dc = DataCollector(model_reporters={"Sheep Count": get_sheep_count,
+                                                 "Wolf Count": get_wolf_count,
+                                                 "Grass / 4 Count": get_grass_count},
+                                                 agent_reporters={})
 
     def remove(self, agent):
         # Is the agent a wolf?
@@ -373,6 +364,7 @@ class WolfSheepGrass(Model):
             # Remove the wolf from the scheduler and from the agent grid.
             self.wolf_schedule.remove(agent)
             self.grid.remove_agent(agent)
+            del agent
 
             # Decrement the wolf count.
             self.wolf_count -= 1
@@ -382,14 +374,13 @@ class WolfSheepGrass(Model):
             # Remove the sheep from the scheduler and from the agent grid.
             self.sheep_schedule.remove(agent)
             self.grid.remove_agent(agent)
+            del agent
 
             # Decrement the sheep count.
             self.sheep_count -= 1
 
-
     def integer_position(self, x_pos, y_pos):
-        return (int(x_pos) % self.width, int(y_pos) % self.height)
-
+        return int(x_pos) % self.width, int(y_pos) % self.height
 
     def print_terrain(self):
         # Print terrain for reference.
@@ -414,17 +405,16 @@ class WolfSheepGrass(Model):
                 row = 0
                 print(WHITE_FONT)
 
-
     def print_population(self, iteration):
         # Print population for reference.
         print("iteration={} wolves={} sheep={} grass={}".format(
             iteration, self.wolf_count, self.sheep_count, self.grass_count))
-        if iteration == 200:
-            print(self.sheep_count)
         print()
 
-
     def step(self):
+        # After agents have moved, collect sheep, wolf, and grass populations.
+        self.dc.collect(self)
+
         # First, move the sheep.
         self.sheep_schedule.step()
 
@@ -434,12 +424,10 @@ class WolfSheepGrass(Model):
         # Finally, grow the grass.
         self.patch_schedule.step()
 
-        # After agents have moved, collect sheep, wolf, and grass populations.
-        # self.data_collector.collect(self)
-
-
     def run_model(self):
         iteration = 0  # Keep track of current iteration (remove later)
+        self.get_wolf_count()
+        self.dc.collect(self)
         # Are the wolves and sheep annihilated?
         are_annihilated = self.wolf_count <= 0 and self.sheep_count <= 0
 
