@@ -13,7 +13,5 @@ BROWN_FONT = "\033[33m"
 GRASS_PATCH = True
 DIRT_PATCH = False
 
-TIMESTAMP_FORMAT = "%Y_%m_%d_%H_%M_%S"
-
 # IDE Likes Empty Line At End Of File
 

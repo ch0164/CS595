@@ -209,8 +209,10 @@ class Sheep(Agent):
 
 class Patch(Agent):
 
-    def __init__(self, model, grass_regrowth_time):
+    def __init__(self, model, grass_regrowth_time, pos):
         super().__init__(model.next_id(), model)
+        self.x, self.y = pos  # Used for file output
+
         # Label the agent as a Sheep.
         self.label = "Patch"
 
@@ -246,6 +248,13 @@ class WolfSheepGrass(Model):
     def __init__(self, width, height, grass_regrowth_rate, initial_wolves, initial_sheep, wolf_food_gain,
                  sheep_food_gain, wolf_reproduction_rate, sheep_reproduction_rate, max_sheep):
         super().__init__()
+        # Clear output files for new test run.
+        with open("../Graphics/wsg.csv", "w"):
+            pass
+        with open("../Graphics/plot.csv", "w"):
+            pass
+
+        self.time = 0  # Used for file output
 
         # Width and height define the x- and y-dimensions of the world, respectively.
         self.width, self.height = width, height
@@ -295,7 +304,7 @@ class WolfSheepGrass(Model):
         for x in range(width):
             for y in range(height):
                 # Instantiate the new Patch object with the given grass regrowth rate.
-                patch = Patch(self, grass_regrowth_rate)
+                patch = Patch(self, grass_regrowth_rate, (x, y))
 
                 # Add the new patch of grass or dirt to its respective scheduler.
                 self.patch_schedule.add(patch)
@@ -310,8 +319,29 @@ class WolfSheepGrass(Model):
                                                  agent_reporters={})
 
     def step(self):
-        # After agents have moved, collect sheep, wolf, and grass populations.
+        # Collect sheep, wolf, and grass populations.
         self.dc.collect(self)
+
+        # Output sheep, wolf, and grass locations and energy to CSV file.
+        output_string = "{},{},{},{},{},\n"
+        with open("../Graphics/wsg.csv", "a") as wsg_file:
+            # Output grass locations
+            for grass in [agent for agent in self.patch_schedule.agents if agent.patch_color is GRASS_PATCH]:
+                wsg_file.writelines(output_string.format(self.time, "grass", grass.x, grass.y, ""))
+            # Output wolf locations and energy.
+            for wolf in self.wolf_schedule.agents:
+                wsg_file.writelines(output_string.format(self.time, "wolf", wolf.x_pos, wolf.y_pos, wolf.energy))
+            # Output sheep locations and energy.
+            for sheep in self.sheep_schedule.agents:
+                wsg_file.writelines(output_string.format(self.time, "sheep", sheep.x_pos, sheep.y_pos, sheep.energy))
+
+        # Output sheep, wolf, grass, and dirt populations to CSV file.
+        with open("../Graphics/plot.csv", "a") as plot_file:
+            wolf_count, sheep_count, grass_count = self.get_wolf_count(), self.get_sheep_count(), self.get_grass_count()
+            dirt_count = self.width * self.height - grass_count
+            plot_file.writelines(output_string.format(self.time, sheep_count, wolf_count, grass_count, dirt_count))
+
+        self.time += 1  # For output file.
 
         # First, move the sheep.
         self.sheep_schedule.step()
