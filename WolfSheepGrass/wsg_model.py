@@ -330,16 +330,18 @@ class WolfSheepGrass(Model):
                 wsg_file.writelines(output_string.format(self.time, "grass", grass.x, grass.y, ""))
             # Output wolf locations and energy.
             for wolf in self.wolf_schedule.agents:
-                wsg_file.writelines(output_string.format(self.time, "wolf", wolf.x_pos, wolf.y_pos, wolf.energy))
+                x, y = wolf.x_pos % self.width, wolf.y_pos % self.height
+                wsg_file.writelines(output_string.format(self.time, "wolf", x, y, wolf.energy))
             # Output sheep locations and energy.
             for sheep in self.sheep_schedule.agents:
-                wsg_file.writelines(output_string.format(self.time, "sheep", sheep.x_pos, sheep.y_pos, sheep.energy))
+                x, y = sheep.x_pos % self.width, sheep.y_pos % self.height
+                wsg_file.writelines(output_string.format(self.time, "sheep", x, y, sheep.energy))
 
         # Output sheep, wolf, grass, and dirt populations to CSV file.
         with open("../Graphics/plot.csv", "a") as plot_file:
             wolf_count, sheep_count, grass_count = self.get_wolf_count(), self.get_sheep_count(), self.get_grass_count()
-            dirt_count = self.width * self.height - grass_count
-            plot_file.writelines(output_string.format(self.time, sheep_count, wolf_count, grass_count, dirt_count))
+            dirt_count = self.width * self.height - grass_count * 5
+            plot_file.writelines(output_string.format(self.time, sheep_count, wolf_count, grass_count * 5, dirt_count))
 
         self.time += 1  # For output file.
 
