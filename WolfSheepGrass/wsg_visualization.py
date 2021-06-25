@@ -1,10 +1,10 @@
-from Utilities.constants import *
-from collections import defaultdict
 from wsg_model import WolfSheepGrass                               # The WolfSheepGrass model
 from mesa.visualization.modules import CanvasGrid, ChartModule     # Type of grid to visualize agents
 from mesa.visualization.ModularVisualization import ModularServer  # Creates the new server to host the model
 from mesa.visualization.UserParam import UserSettableParameter     # Allows UI elements like sliders
 
+GRASS_PATCH = True
+DIRT_PATCH = False
 
 def agent_portrayal(agent):
     # Set up portrayal dictionary which stores attributes of the agent.
@@ -25,7 +25,10 @@ def agent_portrayal(agent):
     elif agent.label == "Sheep":
         # Sheep are displayed above patches and below wolves as white circles.
         portrayal["Shape"], portrayal["r"], portrayal["Color"], portrayal["Layer"] = "circle", 0.5, "white", 1
-        if agent.energy < 5:
+        if agent.just_spawned:
+            portrayal["Color"] = "blue"
+            agent.just_spawned = False
+        elif agent.energy < 5:
             portrayal["Color"] = "red"
 
     # Is the agent a wolf?
@@ -33,7 +36,10 @@ def agent_portrayal(agent):
         # Wolves are displayed above patches and sheep as black squares.
         portrayal["Shape"], portrayal["w"], portrayal["h"] = "rect", 0.5, 0.5
         portrayal["Color"], portrayal["Layer"] = "black", 2
-        if agent.energy < 5:
+        if agent.just_spawned:
+            portrayal["Color"] = "blue"
+            agent.just_spawned = False
+        elif agent.energy < 5:
             portrayal["Color"] = "red"
 
     return portrayal

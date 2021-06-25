@@ -1,10 +1,11 @@
-from Utilities.common_imports import *
-from Utilities.constants import *
 from mesa import Agent, Model
 from mesa.time import RandomActivation
 from mesa.space import MultiGrid
 from mesa.datacollection import DataCollector
-import uuid
+import numpy as np
+
+GRASS_PATCH = True
+DIRT_PATCH = False
 
 
 class Wolf(Agent):
@@ -25,6 +26,9 @@ class Wolf(Agent):
 
         # The wolf's energy is set between 0 and twice its food gain.
         self.energy = 2 * self.model.random.randrange(0, food_gain)
+
+        # Visualization variable for determining if the agent has just spawned in.
+        self.just_spawned = False
 
     def step(self):
         # Move the wolf.
@@ -87,6 +91,7 @@ class Wolf(Agent):
 
             # Create one new agent of the parent's type.
             child_wolf = Wolf(self.model, self.x_pos, self.y_pos, self.food_gain, self.reproduction_rate)
+            child_wolf.just_spawned = True
 
             # Rotate the new agent between 0 and 360 degrees.
             child_wolf.direction += self.model.random.uniform(0, 2 * np.pi)
@@ -128,6 +133,9 @@ class Sheep(Agent):
         # The sheep's energy is set between 0 and twice its food gain.
         self.energy = 2 * self.model.random.randrange(0, food_gain)
 
+        # Visualization variable for determining if the agent has just spawned in.
+        self.just_spawned = False
+
     def step(self):
         # Move the sheep.
         self.move()
@@ -168,6 +176,8 @@ class Sheep(Agent):
     def eat(self):
         # Get the patch at the sheep's position.
         int_pos = self.model.integer_position(self.x_pos, self.y_pos)
+        x, y = int_pos
+        int_pos = (x % self.model.width, y % self.model.height)
         patch = [agent for agent in self.model.grid.get_cell_list_contents([int_pos]) if agent.label == "Patch"][0]
 
         # If the patch has grass, eat it. Otherwise, end action.
@@ -186,6 +196,7 @@ class Sheep(Agent):
 
             # Create one new agent of the parent's type.
             child_sheep = Sheep(self.model, self.x_pos, self.y_pos, self.food_gain, self.reproduction_rate)
+            child_sheep.just_spawned = True
 
             # Rotate the new agent between 0 and 360 degrees.
             child_sheep.direction += self.model.random.uniform(0, 2 * np.pi)
@@ -233,14 +244,15 @@ class Patch(Agent):
         self.grow()
 
     def grow(self):
-        # If the patch is brown and countdown is not positive, set patch color to green and reset the countdown timer.
-        if self.patch_color is DIRT_PATCH and self.countdown <= 0:
-            self.patch_color = GRASS_PATCH
-            self.countdown = self.grass_regrowth_time
-
-        # Otherwise, decrement the countdown timer by one.
-        else:
-            self.countdown -= 1
+        # If the patch is brown,
+        if self.patch_color is DIRT_PATCH:
+            # and countdown is not positive, set patch color to green and reset the countdown timer.
+            if self.countdown <= 0:
+                self.patch_color = GRASS_PATCH
+                self.countdown = self.grass_regrowth_time
+            # Otherwise, decrement the countdown timer by one.
+            else:
+                self.countdown -= 1
 
 
 class WolfSheepGrass(Model):
@@ -348,10 +360,10 @@ class WolfSheepGrass(Model):
         # First, move the sheep.
         self.sheep_schedule.step()
 
-        # Then, move the wolves.
+        # Finally, move the wolves.
         self.wolf_schedule.step()
 
-        # Finally, grow the grass.
+        # Finally, grow the grass. (Note: sheep might be standing on grass)
         self.patch_schedule.step()
 
         # Get wolf and sheep counts.
@@ -389,8 +401,9 @@ class WolfSheepGrass(Model):
 
     def get_sheep_count(self):
         return self.sheep_schedule.get_agent_count()
+
     def get_wolf_count(self):
         return self.wolf_schedule.get_agent_count()
+
     def get_grass_count(self):
         return len([patch for patch in self.patch_schedule.agents if patch.patch_color is GRASS_PATCH]) / 5
-
