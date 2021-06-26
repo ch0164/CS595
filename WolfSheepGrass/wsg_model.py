@@ -32,10 +32,10 @@ class WolfSheepGrass(Model):
         super().__init__()
 
         # Clear output files for new test run.
-        with open("../Graphics/wsg.csv", "w"):
-            pass
-        with open("../Graphics/plot.csv", "w"):
-            pass
+        with open("../Graphics/wsg.csv", "w") as wsg_file:
+            wsg_file.writelines("Time,Agent,x,y,Energy\n")
+        with open("../Graphics/plot.csv", "w") as plot_file:
+            plot_file.writelines("Time,Sheep,Wolves,Grass,Dirt\n")
 
         # Keep track of the current time step.
         self.time = 0
@@ -109,7 +109,7 @@ class WolfSheepGrass(Model):
         self.dc.collect(self)
 
         # Output sheep, wolf, and grass locations and energy to .csv file.
-        output_string = "{},{},{},{},{},\n"
+        output_string = "{},{},{},{},{}\n"
         with open("../Graphics/wsg.csv", "a") as wsg_file:
             # Output grass locations
             for grass in [agent for agent in self.patch_schedule.agents if agent.patch_color is GRASS_PATCH]:
