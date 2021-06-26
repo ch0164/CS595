@@ -1,272 +1,44 @@
-from mesa import Agent, Model
-from mesa.time import RandomActivation
-from mesa.space import MultiGrid
-from mesa.datacollection import DataCollector
-import numpy as np
-
-GRASS_PATCH = True
-DIRT_PATCH = False
-
-
-class Wolf(Agent):
-
-    def __init__(self, model, x_pos, y_pos, food_gain, reproduction_rate):
-        super().__init__(model.next_id(), model)
-        # Label the agent as a Wolf.
-        self.label = "Wolf"
-
-        # The wolf moves around using floating-point coordinates.
-        self.x_pos, self.y_pos = x_pos, y_pos
-
-        # The wolf moves according to its direction.
-        self.direction = self.model.random.uniform(0, 2 * np.pi)
-
-        # The wolf gains a specified amount of energy from eating sheep, and has a specified chance of reproduction.
-        self.food_gain, self.reproduction_rate = food_gain, reproduction_rate
-
-        # The wolf's energy is set between 0 and twice its food gain.
-        self.energy = 2 * self.model.random.randrange(0, food_gain)
-
-        # Visualization variable for determining if the agent has just spawned in.
-        self.just_spawned = False
-
-    def step(self):
-        # Move the wolf.
-        self.move()
-
-        # Deplete energy by 1 unit.
-        self.energy -= 1
-
-        # Eat sheep in the wolf's patch.
-        self.eat()
-
-        # Check for death from starvation.
-        if self.energy <= 0:
-            self.model.remove(self)
-
-        # Reproduce.
-        self.reproduce()
-
-    def move(self):
-        # Turn left between 0 to 50 degrees (or 5pi/18 radians).
-        self.direction += self.model.random.uniform(0, 5 * np.pi / 18)
-
-        # Turn right between 0 to 50 degrees (or 5pi/18 radians).
-        self.direction -= self.model.random.uniform(0, 5 * np.pi / 18)
-
-        # Move forward by one step.
-        self.x_pos += np.cos(self.direction)
-        self.y_pos += np.sin(self.direction)
-
-        # Make sure position is not negative. If it is, loop around to the other side.
-        if self.x_pos < 0:
-            self.x_pos = self.model.width + self.x_pos
-        if self.y_pos < 0:
-            self.y_pos = self.model.height + self.y_pos
-
-        # Move the agent on the grid.
-        self.model.grid.move_agent(self, self.model.integer_position(self.x_pos, self.y_pos))
-
-    def eat(self):
-        # Get a list of all sheep on the same patch as the wolf.
-        int_pos = self.model.integer_position(self.x_pos, self.y_pos)
-        sheep_list = [agent for agent in self.model.grid.get_cell_list_contents([int_pos]) if agent.label == "Sheep"]
-
-        # If sheep were found, eat one of the sheep. If none are found, end action.
-        if sheep_list:
-            # Select one sheep at random.
-            sheep = self.model.random.choice(sheep_list)
-
-            # "Kill" the sheep.
-            self.model.remove(sheep)
-
-            # Add energy from eating the sheep.
-            self.energy += self.food_gain
-
-    def reproduce(self):
-        # If a number between 0 and 1 is less than the agent's reproduction rate, reproduce.
-        if self.model.random.uniform(0, 1) < self.reproduction_rate:
-            # Divide energy by half.
-            self.energy /= 2
-
-            # Create one new agent of the parent's type.
-            child_wolf = Wolf(self.model, self.x_pos, self.y_pos, self.food_gain, self.reproduction_rate)
-            child_wolf.just_spawned = True
-
-            # Rotate the new agent between 0 and 360 degrees.
-            child_wolf.direction += self.model.random.uniform(0, 2 * np.pi)
-
-            # Move the new agent forward by one step.
-            child_wolf.x_pos += np.cos(child_wolf.direction)
-            child_wolf.y_pos += np.sin(child_wolf.direction)
-
-            # Make sure position is not negative. If it is, loop around to the other side.
-            if child_wolf.x_pos < 0:
-                child_wolf.x_pos = self.model.width + child_wolf.x_pos
-            if child_wolf.y_pos < 0:
-                child_wolf.y_pos = self.model.height + child_wolf.y_pos
-
-            # Add the agent to the scheduler.
-            self.model.wolf_schedule.add(child_wolf)
-
-            # Add the agent to the grid.
-            self.model.grid.place_agent(child_wolf, self.model.integer_position(child_wolf.x_pos, child_wolf.y_pos))
-
-
-class Sheep(Agent):
-
-    def __init__(self, model, x_pos, y_pos, food_gain, reproduction_rate):
-        super().__init__(model.next_id(), model)
-
-        # Label the agent as a Sheep.
-        self.label = "Sheep"
-
-        # The sheep moves around using floating-point coordinates.
-        self.x_pos, self.y_pos = x_pos, y_pos
-
-        # The sheep moves according to its direction.
-        self.direction = self.model.random.uniform(0, 2 * np.pi)
-
-        # The sheep gains a specified amount of energy from eating grass, and has a specified chance of reproduction.
-        self.food_gain, self.reproduction_rate = food_gain, reproduction_rate
-
-        # The sheep's energy is set between 0 and twice its food gain.
-        self.energy = 2 * self.model.random.randrange(0, food_gain)
-
-        # Visualization variable for determining if the agent has just spawned in.
-        self.just_spawned = False
-
-    def step(self):
-        # Move the sheep.
-        self.move()
-
-        # Deplete energy by 1 unit.
-        self.energy -= 1
-
-        # If there is grass on the current patch, eat it.
-        self.eat()
-
-        # Check for death from starvation.
-        if self.energy <= 0:
-            self.model.remove(self)
-
-        # Reproduce.
-        self.reproduce()
-
-    def move(self):
-        # Turn left between 0 to 50 degrees (or 5pi/18 radians).
-        self.direction += self.model.random.uniform(0, 5 * np.pi / 18)
-
-        # Turn right between 0 to 50 degrees (or 5pi/18 radians).
-        self.direction -= self.model.random.uniform(0, 5 * np.pi / 18)
-
-        # Move forward by one step.
-        self.x_pos += np.cos(self.direction)
-        self.y_pos += np.sin(self.direction)
-
-        # Make sure position is not negative. If it is, loop around to the other side.
-        if self.x_pos < 0:
-            self.x_pos = self.model.width + self.x_pos
-        if self.y_pos < 0:
-            self.y_pos = self.model.height + self.y_pos
-
-        # Move the agent on the grid.
-        self.model.grid.move_agent(self, self.model.integer_position(self.x_pos, self.y_pos))
-
-    def eat(self):
-        # Get the patch at the sheep's position.
-        int_pos = self.model.integer_position(self.x_pos, self.y_pos)
-        x, y = int_pos
-        int_pos = (x % self.model.width, y % self.model.height)
-        patch = [agent for agent in self.model.grid.get_cell_list_contents([int_pos]) if agent.label == "Patch"][0]
-
-        # If the patch has grass, eat it. Otherwise, end action.
-        if patch.patch_color is GRASS_PATCH:
-            # The grass is gone, so set the patch to dirt.
-            patch.patch_color = DIRT_PATCH
-
-            # Add energy from eating the grass.
-            self.energy += self.food_gain
-
-    def reproduce(self):
-        # If a number between 0 and 1 is less than the agent's reproduction rate, reproduce.
-        if self.model.random.uniform(0, 1) < self.reproduction_rate:
-            # Divide energy by half.
-            self.energy /= 2
-
-            # Create one new agent of the parent's type.
-            child_sheep = Sheep(self.model, self.x_pos, self.y_pos, self.food_gain, self.reproduction_rate)
-            child_sheep.just_spawned = True
-
-            # Rotate the new agent between 0 and 360 degrees.
-            child_sheep.direction += self.model.random.uniform(0, 2 * np.pi)
-
-            # Move the new agent forward by one step.
-            child_sheep.x_pos += np.cos(child_sheep.direction)
-            child_sheep.y_pos += np.sin(child_sheep.direction)
-
-            # Make sure position is not negative. If it is, loop around to the other side.
-            if child_sheep.x_pos < 0:
-                child_sheep.x_pos = self.model.width + child_sheep.x_pos
-            if child_sheep.y_pos < 0:
-                child_sheep.y_pos = self.model.height + child_sheep.y_pos
-
-            # Add the agent to the scheduler.
-            self.model.sheep_schedule.add(child_sheep)
-
-            # Add the agent to the grid.
-            self.model.grid.place_agent(child_sheep, self.model.integer_position(child_sheep.x_pos, child_sheep.y_pos))
-
-
-class Patch(Agent):
-
-    def __init__(self, model, grass_regrowth_time, pos):
-        super().__init__(model.next_id(), model)
-        self.x, self.y = pos  # Used for file output
-
-        # Label the agent as a Sheep.
-        self.label = "Patch"
-
-        # Grass regrowth time defines how many steps a patch of dirt will take before growing grass.
-        self.grass_regrowth_time = grass_regrowth_time
-
-        # Countdown is used to determine when grass grows back. Strictly less than grass regrowth time.
-        self.countdown = self.model.random.randint(0, grass_regrowth_time)
-
-        # There is a 50% chance upon generation that a patch is grass.
-        if self.model.random.uniform(0, 1) < 0.5:
-            self.patch_color = DIRT_PATCH
-        else:
-            self.patch_color = GRASS_PATCH
-
-    def step(self):
-        # Grow this patch of grass for every step.
-        self.grow()
-
-    def grow(self):
-        # If the patch is brown,
-        if self.patch_color is DIRT_PATCH:
-            # and countdown is not positive, set patch color to green and reset the countdown timer.
-            if self.countdown <= 0:
-                self.patch_color = GRASS_PATCH
-                self.countdown = self.grass_regrowth_time
-            # Otherwise, decrement the countdown timer by one.
-            else:
-                self.countdown -= 1
+from wsg_agent import *                         # Import the agents used in the model.
+from mesa import Model                          # Import the Model base class.
+from mesa.time import RandomActivation          # Import the scheduler for each agent.
+from mesa.space import MultiGrid                # Import the grid to position and move agents for the model.
+from mesa.datacollection import DataCollector   # Import the datacollector to track population count over each step.
+
+# Define constants for patches of grass and dirt.
+GRASS_PATCH, DIRT_PATCH = True, False
 
 
 class WolfSheepGrass(Model):
 
-    def __init__(self, width, height, grass_regrowth_rate, initial_wolves, initial_sheep, wolf_food_gain,
-                 sheep_food_gain, wolf_reproduction_rate, sheep_reproduction_rate, max_sheep):
+    def __init__(self, width: int, height: int,
+                 grass_regrowth_rate: int, initial_wolves: int, initial_sheep: int,
+                 wolf_food_gain: int, sheep_food_gain: int,
+                 wolf_reproduction_rate: float, sheep_reproduction_rate: float, max_sheep: int):
+        """
+        Initializes the WolfSheepGrass model.
+        :param width: Width of the grid-world (i.e. horizontal length).
+        :param height: Height of the grid-world (i.e. vertical length).
+        :param grass_regrowth_rate: An integer value between 0 and 100 used to determine when dirt grows to grass.
+        :param initial_wolves: An integer value between 0 and 250 which determines the initial number of wolves.
+        :param initial_sheep: An integer value between 0 and 250 which determines the initial number of sheep.
+        :param wolf_food_gain: An integer value which determines how much energy the wolf gains from eating.
+        :param sheep_food_gain: An integer value which determines how much energy the sheep gains from eating.
+        :param wolf_reproduction_rate: A floating-point value between 0 and 0.2; determines probability to reproduce.
+        :param sheep_reproduction_rate: A floating-point value between 0 and 0.2; determines probability to reproduce.
+        :param max_sheep: The maximum number of sheep which can be alive at one time; if exceeded, the simulation stops.
+        """
+
+        # Initialize the Model base class.
         super().__init__()
+
         # Clear output files for new test run.
         with open("../Graphics/wsg.csv", "w"):
             pass
         with open("../Graphics/plot.csv", "w"):
             pass
 
-        self.time = 0  # Used for file output
+        # Keep track of the current time step.
+        self.time = 0
 
         # Width and height define the x- and y-dimensions of the world, respectively.
         self.width, self.height = width, height
@@ -328,13 +100,15 @@ class WolfSheepGrass(Model):
         self.dc = DataCollector(model_reporters={"Sheep Count": self.get_sheep_count,
                                                  "Wolf Count": self.get_wolf_count,
                                                  "Grass / 5 Count": self.get_grass_count},
-                                                 agent_reporters={})
+                                agent_reporters={})
 
     def step(self):
+        """This method provides the logic loop for each step of the model."""
+
         # Collect sheep, wolf, and grass populations.
         self.dc.collect(self)
 
-        # Output sheep, wolf, and grass locations and energy to CSV file.
+        # Output sheep, wolf, and grass locations and energy to .csv file.
         output_string = "{},{},{},{},{},\n"
         with open("../Graphics/wsg.csv", "a") as wsg_file:
             # Output grass locations
@@ -349,13 +123,14 @@ class WolfSheepGrass(Model):
                 x, y = sheep.x_pos % self.width, sheep.y_pos % self.height
                 wsg_file.writelines(output_string.format(self.time, "sheep", x, y, sheep.energy))
 
-        # Output sheep, wolf, grass, and dirt populations to CSV file.
+        # Output sheep, wolf, grass, and dirt populations to .csv file.
         with open("../Graphics/plot.csv", "a") as plot_file:
             wolf_count, sheep_count, grass_count = self.get_wolf_count(), self.get_sheep_count(), self.get_grass_count()
             dirt_count = self.width * self.height - grass_count * 5
             plot_file.writelines(output_string.format(self.time, sheep_count, wolf_count, grass_count * 5, dirt_count))
 
-        self.time += 1  # For output file.
+        # Increment the time step.
+        self.time += 1
 
         # First, move the sheep.
         self.sheep_schedule.step()
@@ -363,7 +138,7 @@ class WolfSheepGrass(Model):
         # Finally, move the wolves.
         self.wolf_schedule.step()
 
-        # Finally, grow the grass. (Note: sheep might be standing on grass)
+        # Finally, grow the grass. (Note: sheep have a chance to be standing on grass)
         self.patch_schedule.step()
 
         # Get wolf and sheep counts.
@@ -376,12 +151,18 @@ class WolfSheepGrass(Model):
         sheep_inherit = wolf_count <= 0 and sheep_count > self.max_sheep
 
         if are_annihilated:
-            exit(1)  # No message for this
+            exit(1)
         elif sheep_inherit:
             print("The sheep have inherited the world.")
             exit(2)
 
     def remove(self, agent):
+        """
+        This method defines the logic for removing an agent from the simulation after it has "died".
+        :param agent: The agent which has "died", either by being eaten or by starvation.
+        :return:
+        """
+
         # Is the agent a wolf?
         if agent.label == "Wolf":
             # Remove the wolf from the scheduler and from the agent grid.
@@ -396,14 +177,35 @@ class WolfSheepGrass(Model):
             self.sheep_schedule.remove(agent)
             del agent
 
-    def integer_position(self, x_pos, y_pos):
+    def integer_position(self, x_pos: float, y_pos: float) -> tuple:
+        """
+        This method receives a floating-point coordinate and returns an integer coordinate (as a tuple).
+        :param x_pos: The x-position of the agent as a floating-point.
+        :param y_pos: The y-position of the agent as a floating-point.
+        :return: The xy-coordinate of the agent as an ordered pair of integers.
+        """
+
         return int(x_pos) % self.width, int(y_pos) % self.height
 
-    def get_sheep_count(self):
+    def get_sheep_count(self) -> int:
+        """
+        This method returns the current population of sheep in the simulation.
+        :return: An integer representing the population of sheep.
+        """
+
         return self.sheep_schedule.get_agent_count()
 
-    def get_wolf_count(self):
+    def get_wolf_count(self) -> int:
+        """
+        This method returns the current population of sheep in the simulation.
+        :return: An integer representing the population of sheep.
+        """
         return self.wolf_schedule.get_agent_count()
 
-    def get_grass_count(self):
+    def get_grass_count(self) -> float:
+        """
+        This method returns the current number of grass patches divided by 5 (to be closer to wolf/sheep populations).
+        :return: A floating-point number representing the approximate number of grass patches divided by 5.
+        """
+
         return len([patch for patch in self.patch_schedule.agents if patch.patch_color is GRASS_PATCH]) / 5
