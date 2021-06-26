@@ -214,14 +214,20 @@ class Patch(Agent):
         # Grass regrowth time defines how many steps a patch of dirt will take before growing grass.
         self.grass_regrowth_time = grass_regrowth_time
 
-        # Countdown is used to determine when grass grows back. Strictly less than grass regrowth time.
-        self.countdown = self.model.random.randint(0, grass_regrowth_time)
-
         # There is a 50% chance upon generation that a patch is grass.
         if self.model.random.uniform(0, 1) < 0.5:
             self.patch_color = DIRT_PATCH
         else:
             self.patch_color = GRASS_PATCH
+
+        # Countdown is used to determine when grass grows back. If the patch is grass, it is set to maximum growth time.
+        if self.patch_color is GRASS_PATCH:
+            self.countdown = grass_regrowth_time
+
+        # If the patch is dirt, then it is set between 0 and strictly less than grass regrowth time.
+        else:
+            self.countdown = self.model.random.randint(0, grass_regrowth_time)
+
 
     def step(self):
         """This method provides the logic loop for each patch."""
