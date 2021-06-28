@@ -93,6 +93,11 @@ class Animal(Agent):
                 child_agent = Sheep(self.model, self.x_pos, self.y_pos, self.food_gain, self.reproduction_rate)
             else:
                 child_agent = Wolf(self.model, self.x_pos, self.y_pos, self.food_gain, self.reproduction_rate)
+
+            # Set the energy to the parent's.
+            child_agent.energy = self.energy
+
+            # Used for the Mesa visualization.
             child_agent.just_spawned = True
 
             # Rotate the new animal between 0 and 360 degrees.
@@ -179,8 +184,6 @@ class Sheep(Animal):
 
         # Get the patch at the sheep's position.
         int_pos = self.model.integer_position(self.x_pos, self.y_pos)
-        x, y = int_pos
-        int_pos = (x % self.model.width, y % self.model.height)
         patch = [agent for agent in self.model.grid.get_cell_list_contents([int_pos]) if agent.label == "Patch"][0]
 
         # If the patch has grass, eat it. Otherwise, end action.
