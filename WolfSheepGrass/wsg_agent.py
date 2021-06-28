@@ -231,7 +231,6 @@ class Patch(Agent):
         else:
             self.countdown = self.model.random.randint(0, grass_regrowth_time)
 
-
     def step(self):
         """This method provides the logic loop for each patch."""
 
