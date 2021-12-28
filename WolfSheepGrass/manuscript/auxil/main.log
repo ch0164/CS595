@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7250 64-bit) (preloaded format=pdflatex 2021.12.27)  27 DEC 2021 22:29
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7250 64-bit) (preloaded format=pdflatex 2021.12.27)  28 DEC 2021 00:57
 entering extended mode
 **./main.tex
 (main.tex
@@ -28,6 +28,7 @@ File: size12.clo 2019/10/25 v1.4k Standard LaTeX file (size option)
 h.sty"
 Package: amsmath 2019/11/16 v2.17d AMS math features
 \@mathmargin=\skip43
+
 For additional information on amsmath, use the `?' option.
 
 ("C:\Users\Christian\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsmath\amstex
@@ -170,22 +171,70 @@ Package: iftex 2019/11/07 v1.0c TeX engine tests
 
 ("C:\Users\Christian\AppData\Local\Programs\MiKTeX 2.9\tex/latex/geometry\geome
 try.cfg"))
+("C:\Users\Christian\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\graph
+icx.sty"
+Package: graphicx 2017/06/01 v1.1a Enhanced LaTeX Graphics (DPC,SPQR)
+
+("C:\Users\Christian\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\graph
+ics.sty"
+Package: graphics 2019/11/01 v1.3d Standard LaTeX Graphics (DPC,SPQR)
+
+("C:\Users\Christian\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\trig.
+sty"
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
+)
+("C:\Users\Christian\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics-cfg\g
+raphics.cfg"
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 105.
+
+("C:\Users\Christian\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics-def\p
+dftex.def"
+File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen129
+\Gin@req@width=\dimen130
+)
+("C:\Users\Christian\AppData\Local\Programs\MiKTeX 2.9\tex/latex/float\float.st
+y"
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count113
+\float@exts=\toks21
+\float@box=\box55
+\@float@everytoks=\toks22
+\@floatcapt=\box56
+)
+("C:\Users\Christian\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\amssy
+mb.sty"
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+
+("C:\Users\Christian\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\amsfo
+nts.sty"
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+))
 (C:/Users\Christian\PycharmProjects\CS595\WolfSheepGrass\manuscript\auxil\main.
 aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 13.
-LaTeX Font Info:    ... okay on input line 13.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 13.
-LaTeX Font Info:    ... okay on input line 13.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 13.
-LaTeX Font Info:    ... okay on input line 13.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 13.
-LaTeX Font Info:    ... okay on input line 13.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 13.
-LaTeX Font Info:    ... okay on input line 13.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 13.
-LaTeX Font Info:    ... okay on input line 13.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
@@ -193,23 +242,24 @@ LaTeX Font Info:    ... okay on input line 13.
 * paper: <default>
 * layout: <same size as paper>
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
+* hratio: 1:1
 * modes: 
 * h-part:(L,W,R)=(36.135pt, 542.02501pt, 36.135pt)
-* v-part:(T,H,B)=(36.135pt, 722.7pt, 36.135pt)
+* v-part:(T,H,B)=(95.39737pt, 556.47656pt, 143.09605pt)
 * \paperwidth=614.295pt
 * \paperheight=794.96999pt
 * \textwidth=542.02501pt
-* \textheight=722.7pt
+* \textheight=556.47656pt
 * \oddsidemargin=-36.135pt
 * \evensidemargin=-36.135pt
-* \topmargin=-73.135pt
+* \topmargin=-13.87262pt
 * \headheight=12.0pt
 * \headsep=25.0pt
 * \topskip=12.0pt
 * \footskip=30.0pt
 * \marginparwidth=44.0pt
 * \marginparsep=10.0pt
-* \columnsep=10.0pt
+* \columnsep=20.0pt
 * \skip\footins=10.8pt plus 4.0pt minus 2.0pt
 * \hoffset=0.0pt
 * \voffset=0.0pt
@@ -220,40 +270,94 @@ LaTeX Font Info:    ... okay on input line 13.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-(sections/introduction.tex) (sections/background.tex) (sections/implementation.
-tex) (sections/assessment.tex) (sections/conclusion.tex)
+
+("C:\Users\Christian\AppData\Local\Programs\MiKTeX 2.9\tex/context/base/mkii\su
+pp-pdf.mkii"
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count114
+\scratchdimen=\dimen131
+\scratchbox=\box57
+\nofMPsegments=\count115
+\nofMParguments=\count116
+\everyMPshowfont=\toks23
+\MPscratchCnt=\count117
+\MPscratchDim=\dimen132
+\MPnumerator=\count118
+\makeMPintoPDFobject=\count119
+\everyMPtoPDFconversion=\toks24
+)
+("C:\Users\Christian\AppData\Local\Programs\MiKTeX 2.9\tex/latex/epstopdf-pkg\e
+pstopdf-base.sty"
+Package: epstopdf-base 2019-12-09 v2.10 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+)
+LaTeX Font Info:    Trying to load font information for U+msa on input line 16.
+
+
+("C:\Users\Christian\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\umsa.
+fd"
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 16.
+
+
+("C:\Users\Christian\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\umsb.
+fd"
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+) (sections/introduction.tex) (sections/background.tex [1
+
+{C:/Users/Christian/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
+<./figures/population_dynamics.png, id=10, 513.92pt x 236.885pt>
+File: ./figures/population_dynamics.png Graphic file (type png)
+<use ./figures/population_dynamics.png>
+Package pdftex.def Info: ./figures/population_dynamics.png  used on input line 
+83.
+(pdftex.def)             Requested size: 261.0125pt x 120.31093pt.
+ [2]
+<./figures/netlogo_wsg.png, id=19, 511.9125pt x 511.9125pt>
+File: ./figures/netlogo_wsg.png Graphic file (type png)
+<use ./figures/netlogo_wsg.png>
+Package pdftex.def Info: ./figures/netlogo_wsg.png  used on input line 133.
+(pdftex.def)             Requested size: 261.0125pt x 261.00943pt.
+ [3 <./figures/population_dynamics.png>]) (sections/implementation.tex [4 <./fi
+gures/netlogo_wsg.png>]
+<./figures/mesa_wsg.png, id=26, 511.9125pt x 513.92pt>
+File: ./figures/mesa_wsg.png Graphic file (type png)
+<use ./figures/mesa_wsg.png>
+Package pdftex.def Info: ./figures/mesa_wsg.png  used on input line 56.
+(pdftex.def)             Requested size: 261.0125pt x 262.03299pt.
+[5 <./figures/mesa_wsg.png>]) (sections/assessment.tex)
+(sections/conclusion.tex)
 (C:/Users\Christian\PycharmProjects\CS595\WolfSheepGrass\manuscript\auxil\main.
-bbl)
-Overfull \vbox (157.22421pt too high) has occurred while \output is active []
-
-
-Overfull \vbox (157.22421pt too high) has occurred while \output is active []
-
-[1
-
-{C:/Users/Christian/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}] [2]
+bbl [6]) [7]
 (C:/Users\Christian\PycharmProjects\CS595\WolfSheepGrass\manuscript\auxil\main.
 aux) ) 
 Here is how much of TeX's memory you used:
- 1583 strings out of 492445
- 22156 string characters out of 3117943
- 98256 words of memory out of 3000000
- 5964 multiletter control sequences out of 15000+200000
- 7815 words of font info for 28 fonts, out of 3000000 for 9000
+ 2940 strings out of 492445
+ 39965 string characters out of 3117943
+ 114098 words of memory out of 3000000
+ 7261 multiletter control sequences out of 15000+200000
+ 13397 words of font info for 51 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 30i,6n,34p,223b,238s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 30i,7n,33p,438b,337s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Users/Christian/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/
 amsfonts/cm/cmbx10.pfb><C:/Users/Christian/AppData/Local/Programs/MiKTeX 2.9/fo
 nts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/Christian/AppData/Local/Progr
-ams/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/Christian/App
-Data/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Use
-rs/Christian/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/c
-mti10.pfb><C:/Users/Christian/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/pub
-lic/amsfonts/cm/cmti12.pfb>
+ams/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Users/Christian/Ap
+pData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Us
+ers/Christian/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/
+cmr12.pfb><C:/Users/Christian/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/pub
+lic/amsfonts/cm/cmr8.pfb><C:/Users/Christian/AppData/Local/Programs/MiKTeX 2.9/
+fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Christian/AppData/Local/Pro
+grams/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/Christian/A
+ppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/
+Users/Christian/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/c
+m/cmti12.pfb>
 Output written on C:/Users\Christian\PycharmProjects\CS595\WolfSheepGrass\manus
-cript\out\main.pdf (2 pages, 89294 bytes).
+cript\out\main.pdf (7 pages, 378239 bytes).
 PDF statistics:
- 33 PDF objects out of 1000 (max. 8388607)
+ 69 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 16 words of extra memory for PDF output out of 10000 (max. 10000000)
 
