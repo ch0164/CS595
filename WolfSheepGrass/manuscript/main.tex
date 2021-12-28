@@ -1,0 +1,57 @@
+\documentclass[12pt]{article}
+\title{Wolf Sheep Predation:  Reimplementing a Predator-Prey Ecosystem Model
+    as an Instructional Exercise in Agent-Based Modeling}
+\author{E. Michael Bearss, Walter Alan Cantrell, Christian W. Hall, \\
+    Joy E. Pinckard, and Mikel D. Petty}\vspace{-2ex}
+\usepackage{amsmath}
+\usepackage{multicol}
+\usepackage[margin=0.5in]{geometry}
+%\usepackage{graphicx}
+%\usepackage{lineno}
+
+\date{}
+\begin{document}
+    \maketitle
+    \noindent
+    \begin{center}
+        University of Alabama in Huntsville \\
+        Computer Science Department \\
+        emb0034@uah.edu, wac0010@uah.edu, ch0164@uah.edu, \\
+        jep0037@uah.edu, pettym@uah.edu \\
+        *Corresponding author
+    \end{center}
+
+    \begin{abstract}\vspace{-2ex}
+    \noindent
+    \textit{
+        The NetLogo Wolf Sheep Predation model is well suited for instructional use due
+        to its use of familiar agents, concise source code, and simple graphics.
+        As part of graduate course surveying modeling and simulation methods,
+        a team of four students reimplemented the Wolf Sheep Predation model,
+        treating the NetLogo version as the simuland, or system their model should simulate.
+        The reimplementation used the Python programming language and the Mesa framework.
+        Mesa is a framework for agent-based modeling written in Python,
+        with features that are roughly equivalent to NetLogo.
+        This paper documents their implementation process, compares the reimplemented
+        Python/Mesa version to the original NetLogo version, and reports the students'
+        and instructor's assessments of Wolf Sheep Predation as an instructional exercise.
+    }
+    \end{abstract}
+
+    \begin{multicols}{2}
+    \input{sections/introduction.tex}
+    \input{sections/background.tex}
+    \input{sections/implementation.tex}
+    \input{sections/assessment.tex}
+    \input{sections/conclusion.tex}~\cite{python-mesa-2020}
+    \bibliography{main}
+    \bibliographystyle{plain}
+
+% \begin{figure}[]
+%   \centering
+%   \includegraphics{figures/netlogo_wsg}
+%   \caption{Example 1}
+%   \label{fig:example}
+% \end{figure}
+\end{multicols}{2}
+\end{document}
