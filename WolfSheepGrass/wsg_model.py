@@ -13,7 +13,8 @@ class WolfSheepGrass(Model):
     def __init__(self, width: int, height: int,
                  grass_regrowth_rate: int, initial_wolves: int, initial_sheep: int,
                  wolf_food_gain: int, sheep_food_gain: int,
-                 wolf_reproduction_rate: float, sheep_reproduction_rate: float, max_sheep: int):
+                 wolf_reproduction_rate: float, sheep_reproduction_rate: float,
+                 max_sheep: int) -> None:
         """
         Initializes the WolfSheepGrass model.
         :param width: Width of the grid-world (i.e. horizontal length).

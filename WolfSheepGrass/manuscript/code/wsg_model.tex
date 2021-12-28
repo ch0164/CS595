@@ -1,0 +1,50 @@
+\begin{lstlisting}[
+    language=Python,
+    caption={\textit{Python implementation of the Wolf Sheep Predation model's constructor.
+            (The line numbers are not part of the Python code;
+            they are included for ease of reference.)}},
+    label={lst:code},
+    breaklines=true]
+from WolfSheepGrass.wsg_agent import *  # Import the agents used in the model.
+from mesa import Model  # Import the Model base class.
+from mesa.time import RandomActivation  # Import the scheduler for each agent.
+from mesa.space import MultiGrid  # Import the grid to position and move agents.
+
+class WolfSheepGrass(Model):
+  def __init__(self, width: int, height: int,
+    grass_regrowth_rate: int, initial_wolves: int, initial_sheep: int,
+    wolf_food_gain: int, sheep_food_gain: int,
+    wolf_reproduction_rate: float, sheep_reproduction_rate: float,
+    max_sheep: int) -> None:
+
+    super().__init__()  # Initialize the Model base class.
+    self.width, self.height = width, height  # Define grid dimensions.
+    self.max_sheep = max_sheep  # Don't let the number of sheep grow too large.
+    self.grid = MultiGrid(width, height, True)  # Define discrete, toroidal grid.
+
+    # Instantiate schedulers.
+    self.sheep_schedule = RandomActivation(self)
+    self.wolf_schedule = RandomActivation(self)
+    self.patch_schedule = RandomActivation(self)
+
+    # Add initial sheep.
+    for _ in range(initial_sheep):
+      x_pos, y_pos = self.random.uniform(0, width), self.random.uniform(0, height)
+      sheep = Sheep(self, x_pos, y_pos, sheep_food_gain, sheep_reproduction_rate)
+      self.sheep_schedule.add(sheep)
+      self.grid.place_agent(sheep, (x_pos, y_pos))
+
+    # Add initial wolves.
+    for _ in range(initial_wolves):
+      x_pos, y_pos = self.random.uniform(0, width), self.random.uniform(0, height)
+      wolf = Wolf(self, x_pos, y_pos, wolf_food_gain, wolf_reproduction_rate)
+      self.wolf_schedule.add(wolf)
+      self.grid.place_agent(wolf, (x_pos, y_pos))
+
+    # Initialize the environment.
+    for x in range(width):
+      for y in range(height):
+        patch = Patch(self, grass_regrowth_rate, (x, y))
+        self.patch_schedule.add(patch)
+        self.grid.place_agent(patch, (x, y))
+\end{lstlisting}
